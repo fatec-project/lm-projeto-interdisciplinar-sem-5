@@ -1,4 +1,4 @@
-@startuml
+@startuml usuario-cadastro
 
 left to right direction
 skinparam monochrome true
