@@ -20,8 +20,8 @@ rectangle "Sistema de Cadastro" {
   
   UC1 --> UC2 : "Inclui"
   UC1 --> UC3 : "Inclui"
-  UC1 --> UC4 : "Estende"
-  UC1 --> UC5 : "Estende"
+  UC1 <|-- UC4 : "Estende"
+  UC1 <|-- UC5 : "Estende"
   UC3 --> UC6 : "Relacionado"
 }
 
