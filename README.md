@@ -28,11 +28,11 @@ categoria/motivo-existencia
 - **Ferramentas**: GitHub Projects, Figma, PlantUML
 
 ## ⚙️ Configuração do Ambiente
-
+```
 git clone https://github.com/seu-usuario/lm-projeto-interdisciplinar-sem-5.git
 cd lm-projeto-interdisciplinar-sem-5
 npm install
-
+```
 ## 🤝 Como Contribuir
 1. Crie uma branch:
    ```bash
