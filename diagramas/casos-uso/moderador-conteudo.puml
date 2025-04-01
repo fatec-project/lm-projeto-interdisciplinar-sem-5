@@ -1,0 +1,40 @@
+@startuml moderador
+
+left to right direction
+skinparam monochrome true
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #000000
+  ArrowColor #000000
+}
+
+actor Moderador as mod
+actor "Sistema de Conteúdo" as system
+
+rectangle "Moderação de Conteúdo" {
+  usecase "Gerenciar Conteúdo" as UC0
+  usecase "Aprovar Post" as UC1
+  usecase "Comentar Post" as UC2
+  usecase "Reportar Conteúdo" as UC3
+  usecase "Encaminhar para Admin" as UC4
+  
+  UC0 --> UC1 : "Inclui"
+  UC0 --> UC2 : "Inclui"
+  UC0 --> UC3 : "Inclui"
+  UC3 <|-- UC4 : "Extende\n(caso grave)"
+}
+
+mod --> UC0 : "Acessa painel"
+mod --> UC1 : "1. Publica conteúdo"
+mod --> UC2 : "2. Adiciona feedback"
+mod --> UC3 : "3. Sinaliza problema"
+system --> UC4 : "Notifica administrador"
+
+note right of UC3
+  **Critérios para reporte**:
+  - Conteúdo ofensivo
+  - Fake news
+  - Spam
+end note
+
+@enduml
