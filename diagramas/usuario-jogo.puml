@@ -1,4 +1,4 @@
-@startuml
+@startuml usuario-jogo
 left to right direction
 skinparam packageStyle rectangle
 actor Jogador as user
