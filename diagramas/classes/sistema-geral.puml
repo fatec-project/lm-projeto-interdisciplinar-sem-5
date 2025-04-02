@@ -1,4 +1,4 @@
-@startuml sistema_geral
+@startuml sistema_geral_atualizado
 
 class Administrador {
   + id: Integer
@@ -26,6 +26,7 @@ class Usuario {
   + senha: String
   + status: String
   + dataCadastro: Date
+  + moedas: Integer
   + autenticar()
   + gerenciarConta()
   + recuperarSenha()
@@ -78,10 +79,19 @@ class Party {
 class Personagem {
   + id: Integer
   + nome: String
-  + tipo: String
-  + nivel: Integer
+  + vida: Integer
+  + ataque: Integer
+  + velocidade: Integer
+  + preço: Integer
   + comprar()
   + selecionar()
+}
+
+class Loja {
+  + id: Integer
+  + personagensDisponiveis: List<Personagem>
+  + atualizarEstoque()
+  + listarPersonagens()
 }
 
 class SistemaAutenticacao {
@@ -111,15 +121,12 @@ Post "1" *-- "0..*" Comentario : contém
 
 Party "1" *-- "1..4" Personagem : contém
 
+Loja "1" *-- "0..*" Personagem : oferece
+Usuario "1" -- "1" Loja : acessa
+Usuario --> Personagem : compra
+
 Usuario ..> SistemaAutenticacao : usa
 Administrador ..> SistemaLogs : usa
-
-enum TipoPersonagem {
-  GUERREIRO
-  MAGO
-  ARQUEIRO
-  CURANDEIRO
-}
 
 enum StatusPost {
   RASCUNHO
