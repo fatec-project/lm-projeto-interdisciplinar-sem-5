@@ -1,0 +1,40 @@
+DROP DATABASE IF EXISTS dengue;
+CREATE DATABASE dengue;
+USE dengue;
+
+CREATE tipo_usuario (
+  id INTEGER AUTO_INCREMENT PRIMARY KEY,
+  tipo VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE status_usuario (
+  id INTEGER AUTO_INCREMENT PRIMARY KEY,
+  status VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE usuario (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(30) NOT NULL,
+  sobrenome VARCHAR(50) NOT NULL,
+  email VARCHAR(50) NOT NULL UNIQUE,
+  senha VARCHAR(50) NOT NULL,
+  data_cadastro DATE NOT NULL DEFAULT CURRENT_DATE,
+  moedas INTEGER DEFAULT 0,
+  status_id INTEGER NOT NULL,
+  tipo_id INTEGER NOT NULL,
+  FOREIGN KEY (status_id) REFERENCES status_usuario(id) ON DELETE CASCADE,
+  FOREIGN KEY (tipo_id) REFERENCES tipo_usuario(id) ON DELETE CASCADE
+);
+
+CREATE TABLE tela (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  tela VARCHAR(100) NOT NULL
+);
+
+CREATE permissoes (
+  tipo_usuario_id INTEGER,
+  tela_id INTEGER,
+  PRIMARY KEY (tipo_usuario_id, tela_id),
+  FOREIGN KEY (tipo_usuario_id) REFERENCES tipo_usuario(id) ON DELETE CASCADE,
+  FOREIGN KEY (tela_id) REFERENCES tela(id) ON DELETE CASCADE
+);
