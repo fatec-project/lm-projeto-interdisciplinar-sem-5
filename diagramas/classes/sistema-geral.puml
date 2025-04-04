@@ -54,7 +54,7 @@ class Comentario {
   + excluir()
 }
 
-class Contato {
+class ContatoOrg {
   + id: Integer
   + entidade: String
   + telefone: String
