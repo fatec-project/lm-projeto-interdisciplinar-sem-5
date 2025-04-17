@@ -1,0 +1,146 @@
+@startuml sistema_geral_atualizado
+
+class Administrador {
+  + id: Integer
+  + nome: String
+  + email: String
+  + permissões: List<String>
+  + gerenciarContatos()
+  + gerenciarUsuarios()
+  + gerenciarPosts()
+}
+
+class Moderador {
+  + id: Integer
+  + nome: String
+  + email: String
+  + moderarConteudo()
+  + aprovarPost()
+  + reportarConteudo()
+}
+
+class Usuario {
+  + id: Integer
+  + nome: String
+  + email: String
+  + senha: String
+  + status: String
+  + dataCadastro: Date
+  + moedas: Integer
+  + autenticar()
+  + gerenciarConta()
+  + recuperarSenha()
+}
+
+class Post {
+  + id: Integer
+  + titulo: String
+  + conteudo: String
+  + autor: Usuario
+  + dataPublicacao: Date
+  + status: String
+  + publicar()
+  + arquivar()
+}
+
+class Comentario {
+  + id: Integer
+  + conteudo: String
+  + autor: Usuario
+  + post: Post
+  + dataCriacao: Date
+  + status: String
+  + editar()
+  + excluir()
+}
+
+class Org {
+  + id: Integer
+  + cnpj: String
+  + entidade: String
+  + telefone: String
+  + email: String
+  + site: String
+  + redesSociais: List<String>
+  + areaAtuacao: String
+  + adicionar()
+  + editar()
+  + remover()
+}
+
+class Party {
+  + id: Integer
+  + jogador: Usuario
+  + personagens: List<Personagem>
+  + status: String
+  + ajustarParty()
+  + iniciarJogo()
+}
+
+class Personagem {
+  + id: Integer
+  + nome: String
+  + vida: Integer
+  + ataque: Integer
+  + velocidade: Integer
+  + preço: Integer
+  + comprar()
+  + selecionar()
+}
+
+class Loja {
+  + id: Integer
+  + personagensDisponiveis: List<Personagem>
+  + atualizarEstoque()
+  + listarPersonagens()
+}
+
+class SistemaAutenticacao {
+  + validarCredenciais()
+  + gerarToken()
+  + resetarSenha()
+}
+
+class SistemaLogs {
+  + registrarAcao()
+  + armazenarHistorico()
+}
+
+Administrador "1" *-- "0..*" Org : gerencia
+Administrador "1" *-- "0..*" Usuario : gerencia
+Administrador "1" *-- "0..*" Post : gerencia
+
+Moderador --|> Usuario : herança
+Moderador "1" *-- "0..*" Post : modera
+Moderador "1" *-- "0..*" Comentario : modera
+
+Usuario "1" *-- "0..*" Post : cria
+Usuario "1" *-- "0..*" Comentario : faz
+Usuario "1" *-- "1" Party : possui
+
+Post "1" *-- "0..*" Comentario : contém
+
+Party "1" *-- "1..4" Personagem : contém
+
+Loja "1" *-- "0..*" Personagem : oferece
+Usuario "1" -- "1" Loja : acessa
+Usuario --> Personagem : compra
+
+Usuario ..> SistemaAutenticacao : usa
+Administrador ..> SistemaLogs : usa
+
+enum StatusPost {
+  RASCUNHO
+  PUBLICADO
+  ARQUIVADO
+  REMOVIDO
+}
+
+enum StatusUsuario {
+  ATIVO
+  INATIVO
+  BANIDO
+  SUSPENSO
+}
+
+@enduml
