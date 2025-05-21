@@ -1,0 +1,17 @@
+@startuml avaliacao-jogo
+actor Cliente
+participant "Sistema" as Sistema
+participant "Cliente" as ClienteEntidade
+participant "Jogo" as Jogo
+participant "Interacao" as Interacao
+
+Cliente -> Sistema : acessarPaginaDoJogo(jogoId)
+Sistema -> ClienteEntidade : verificarPosseJogo(jogoId)
+alt possuiJogo
+    Cliente -> Sistema : submeterAvaliacao(dados)
+    Sistema -> Interacao : criarAvaliacao(dados)
+    Sistema -> Jogo : atualizarMediaAvaliacoes()
+else naoPossui
+    Sistema -> Cliente : exibirErro("Jogo não comprado")
+end
+@enduml
