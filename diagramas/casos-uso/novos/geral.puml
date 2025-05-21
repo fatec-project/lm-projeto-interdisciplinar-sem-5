@@ -1,0 +1,17 @@
+@startuml geral
+left to right direction
+actor Cliente
+actor Administrador
+
+rectangle Sistema {
+  (Comprar Jogo) as comprar
+  (Gerenciar Jogos) as gerenciar
+  (Gerenciar Usuários) as users
+  (Gerar Relatórios) as relatorios
+
+  Cliente --> comprar
+  Administrador --> gerenciar
+  Administrador --> users
+  Administrador --> relatorios
+}
+@enduml
