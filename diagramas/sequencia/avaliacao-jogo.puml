@@ -1,0 +1,26 @@
+@startuml sequence_avaliacao
+actor Cliente
+participant "Frontend" as FE
+participant Sistema
+participant Biblioteca
+participant Avaliacao
+
+Cliente -> FE: Acessa página do jogo
+FE -> Sistema: getJogo(jogoId)
+Sistema -> FE: dadosJogo
+
+Cliente -> FE: Clica em "Avaliar"
+FE -> Biblioteca: verificarPosseJogo(usuarioId, jogoId)
+alt Jogo na biblioteca
+    Biblioteca -> FE: true
+    FE -> Cliente: Mostra formulário avaliação
+    Cliente -> FE: Preenche nota(8.5) e comentário
+    FE -> Avaliacao: criar(usuarioId, jogoId, nota, texto)
+    Avaliacao -> Sistema: marcarComoVerificada()
+    Avaliacao -> FE: avaliacaoCriada
+    FE -> Cliente: Confirmação + exibe na página
+else Jogo não comprado
+    Biblioteca -> FE: false
+    FE -> Cliente: "Você precisa possuir o jogo para avaliar"
+end
+@enduml

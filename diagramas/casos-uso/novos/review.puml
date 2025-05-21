@@ -1,0 +1,55 @@
+@startuml avaliações-comentários
+left to right direction
+actor Cliente
+actor Administrador
+actor Sistema
+
+rectangle "Validação de Compra" {
+  (Verificar Jogo na Biblioteca) as verificar
+  (Bloquear Avaliação) as bloquear
+}
+
+rectangle "Avaliação e Comentários" {
+  (Acessar Página do Jogo) as acessar
+  (Submeter Avaliação) as submeter
+  (Escrever Comentário) as comentar
+  (Editar Conteúdo) as editar
+  (Reportar Conteúdo) as reportar
+
+  submeter --> (Atribuir Nota 0 a 10)
+  comentar --> (Publicar Texto)
+}
+
+rectangle "Moderação" {
+  (Analisar Reportes) as analisar
+  (Remover Conteúdo) as remover
+  (Banir Usuário) as banir
+  (Ocultar Avaliação) as ocultar
+}
+
+' Fluxo principal
+Cliente --> acessar
+acessar --> verificar
+verificar --> submeter : "jogo na biblioteca?"
+verificar --> bloquear : "jogo NÃO comprado"
+submeter --> comentar : "opcional"
+comentar --> reportar : "se inapropriado"
+
+' Moderação
+reportar --> analisar
+Administrador --> analisar
+analisar --> remover : "conteúdo viola regras"
+analisar --> ocultar : "avaliação fraudulenta"
+remover --> banir : "reincidência"
+
+' Sistema
+Sistema --> verificar
+
+' Legenda
+note right of Administrador
+  **Ações de Moderação**:
+  1. Remover comentários ofensivos
+  2. Ocultar avaliações falsas
+  3. Banir usuários reincidentes
+end note
+@enduml

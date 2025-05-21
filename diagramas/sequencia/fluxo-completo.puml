@@ -1,0 +1,34 @@
+@startuml sequence_completo
+actor Cliente
+participant "Sistema" as S
+participant Carrinho
+participant Pedido
+participant Biblioteca
+participant Avaliacao
+
+group Processo de Compra
+    Cliente -> S: Buscar jogos
+    S -> Cliente: Lista filtrada
+    Cliente -> S: Adicionar ao carrinho
+    S -> Carrinho: adicionarItem()
+    Cliente -> S: Finalizar compra
+    S -> Pedido: criar()
+    Pedido -> Biblioteca: adicionarJogos()
+end
+
+group Pós-Compra
+    Cliente -> S: Avaliar jogo
+    S -> Biblioteca: verificarPosse()
+    Biblioteca -> S: true
+    S -> Avaliacao: criar()
+    Avaliacao -> S: atualizarMediaJogo()
+end
+
+group Moderação
+    S -> Administrador: Notificar avaliação reportada
+    Administrador -> S: Analisar conteúdo
+    alt Remover
+        S -> Avaliacao: deletar()
+    end
+end
+@enduml
