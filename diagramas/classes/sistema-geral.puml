@@ -1,146 +1,164 @@
-@startuml sistema_geral_atualizado
+@startuml ClassDiagramEcommerceKeys_Unificado
+
+' ###### ENTIDADES PRINCIPAIS ######
+class Usuario {
+  + id: string
+  + nome: string
+  + email: string
+  + senha: string (hash)
+  + dataCadastro: DateTime
+  + status: enum(ativo, inativo)
+  + tipo: enum(cliente, admin)
+  --
+  + login(): boolean
+  + alterarSenha(): void
+}
+
+class Cliente {
+  + cpf: string
+  + pedidos: Pedido[]
+  + biblioteca: BibliotecaItem[]
+  + carrinhoAtual: Carrinho
+  --
+  + verificarPosseJogo(): boolean
+  + finalizarCompra(): Pedido
+}
 
 class Administrador {
-  + id: Integer
-  + nome: String
-  + email: String
-  + permissões: List<String>
-  + gerenciarContatos()
-  + gerenciarUsuarios()
-  + gerenciarPosts()
+  + nivelAcesso: enum(basico, total)
+  --
+  + banirUsuario(): void
+  + gerarRelatorio(): string
 }
 
-class Moderador {
-  + id: Integer
-  + nome: String
-  + email: String
-  + moderarConteudo()
-  + aprovarPost()
-  + reportarConteudo()
+class Jogo {
+  + id: string
+  + nome: string
+  + descricao: string
+  + precoBase: float
+  + plataformas: string[]
+  + generos: string[]
+  + lancamento: Date
+  + desenvolvedora: string
+  + imagemUrl: string
+  --
+  + calcularMediaAvaliacoes(): float
 }
 
-class Usuario {
-  + id: Integer
-  + nome: String
-  + email: String
-  + senha: String
-  + status: String
-  + dataCadastro: Date
-  + moedas: Integer
-  + autenticar()
-  + gerenciarConta()
-  + recuperarSenha()
+class Key {
+  + id: string
+  + codigo: string (criptografado)
+  + status: enum(disponivel, vendida, resgatada)
+  + dataAquisicao: DateTime
+  + lote: string
+  --
+  + validarKey(): boolean
 }
 
-class Post {
-  + id: Integer
-  + titulo: String
-  + conteudo: String
-  + autor: Usuario
-  + dataPublicacao: Date
-  + status: String
-  + publicar()
-  + arquivar()
+' ###### ENTIDADES DE NEGÓCIO ######
+class Pedido {
+  + id: string
+  + data: DateTime
+  + status: enum(pendente, pago, cancelado)
+  + total: float
+  + metodoPagamento: string
+  --
+  + calcularTotal(): float
+  + cancelarPedido(): void
+  + gerarNotaFiscal(): string
 }
 
-class Comentario {
-  + id: Integer
-  + conteudo: String
-  + autor: Usuario
-  + post: Post
-  + dataCriacao: Date
-  + status: String
-  + editar()
-  + excluir()
+class ItemPedido {
+  + keyId: string
+  + precoUnitario: float
+  + desconto: float
 }
 
-class Org {
-  + id: Integer
-  + cnpj: String
-  + entidade: String
-  + telefone: String
-  + email: String
-  + site: String
-  + redesSociais: List<String>
-  + areaAtuacao: String
-  + adicionar()
-  + editar()
-  + remover()
+class Carrinho {
+  + id: string
+  + itens: ItemCarrinho[]
+  + dataAtualizacao: DateTime
+  + cupomAplicado: string
+  --
+  + adicionarItem(): void
+  + removerItem(): void
+  + calcularSubtotal(): float
+  + converterParaPedido(): Pedido
 }
 
-class Party {
-  + id: Integer
-  + jogador: Usuario
-  + personagens: List<Personagem>
-  + status: String
-  + ajustarParty()
-  + iniciarJogo()
+class ItemCarrinho {
+  + quantidade: int
+  + precoUnitario: float
 }
 
-class Personagem {
-  + id: Integer
-  + nome: String
-  + vida: Integer
-  + ataque: Integer
-  + velocidade: Integer
-  + preço: Integer
-  + comprar()
-  + selecionar()
+class Interacao {
+  + id: string
+  + tipo: enum(avaliacao, comentario)
+  + titulo: string
+  + texto: string
+  + nota: float (0.0-10.0)
+  + dataPublicacao: DateTime
+  + dataEdicao: DateTime
+  + votosPositivos: int
+  + votosNegativos: int
+  + comprovadoCompra: boolean
+  + horasJogadas: int
+  + plataforma: string
+  + versaoJogo: string
+  + verificada: boolean
+  + editado: boolean
+  --
+  + editar(novoTitulo: string, novoTexto: string): void
+  + votar(positivo: boolean): void
+  + reportar(motivo: string): void
+  + calcularTaxaAproveitamento(): float
+  + marcarComoVerificada(): void
+  + responder(texto: string): Interacao
+  + ordenarRespostas(por: string): void
 }
 
-class Loja {
-  + id: Integer
-  + personagensDisponiveis: List<Personagem>
-  + atualizarEstoque()
-  + listarPersonagens()
+' ###### RELACIONAMENTOS ATUALIZADOS ######
+Usuario <|-- Cliente
+Usuario <|-- Administrador
+
+Cliente "1" -- "0..*" Pedido
+Cliente "1" -- "1" Carrinho
+Carrinho "1" -- "1" Pedido : <<converte em>>
+Pedido "1" -- "1..*" ItemPedido
+ItemPedido "1" -- "1" Key
+
+Cliente "1" -- "0..*" Interacao
+Jogo "1" -- "0..*" Key
+Jogo "1" -- "0..*" Interacao
+
+Interacao "0..*" -- "0..*" Interacao : respostas >
+
+Carrinho "1" -- "1..*" ItemCarrinho
+ItemCarrinho "1" -- "1" Jogo
+
+Administrador "1" -- "0..*" Interacao : modera >
+
+' ###### ENUMS ######
+enum StatusKey {
+  DISPONIVEL
+  VENDIDA
+  RESGATADA
 }
 
-class SistemaAutenticacao {
-  + validarCredenciais()
-  + gerarToken()
-  + resetarSenha()
+enum StatusPedido {
+  PENDENTE
+  PAGO
+  CANCELADO
 }
 
-class SistemaLogs {
-  + registrarAcao()
-  + armazenarHistorico()
+enum TipoUsuario {
+  CLIENTE
+  ADMIN
 }
 
-Administrador "1" *-- "0..*" Org : gerencia
-Administrador "1" *-- "0..*" Usuario : gerencia
-Administrador "1" *-- "0..*" Post : gerencia
-
-Moderador --|> Usuario : herança
-Moderador "1" *-- "0..*" Post : modera
-Moderador "1" *-- "0..*" Comentario : modera
-
-Usuario "1" *-- "0..*" Post : cria
-Usuario "1" *-- "0..*" Comentario : faz
-Usuario "1" *-- "1" Party : possui
-
-Post "1" *-- "0..*" Comentario : contém
-
-Party "1" *-- "1..4" Personagem : contém
-
-Loja "1" *-- "0..*" Personagem : oferece
-Usuario "1" -- "1" Loja : acessa
-Usuario --> Personagem : compra
-
-Usuario ..> SistemaAutenticacao : usa
-Administrador ..> SistemaLogs : usa
-
-enum StatusPost {
-  RASCUNHO
-  PUBLICADO
-  ARQUIVADO
-  REMOVIDO
-}
-
-enum StatusUsuario {
-  ATIVO
-  INATIVO
-  BANIDO
-  SUSPENSO
+enum TipoInteracao {
+  AVALIACAO
+  COMENTARIO
 }
 
 @enduml
