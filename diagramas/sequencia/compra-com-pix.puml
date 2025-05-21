@@ -1,0 +1,16 @@
+@startuml compra-com-pix
+actor Cliente
+participant "Carrinho" as Carrinho
+participant "Pedido" as Pedido
+participant "Key" as Key
+participant "EmailService" as Email
+
+Cliente -> Carrinho : finalizarCompra()
+Carrinho -> Carrinho : calcularSubtotal()
+Carrinho -> Pedido : converterParaPedido()
+Pedido -> Pedido : calcularTotal()
+Pedido -> Key : reservarKeys()
+Pedido -> Pedido : marcarComoPago("Pix")
+Pedido -> Email : enviarKeysPorEmail()
+Cliente <- Email : confirmação com keys
+@enduml
