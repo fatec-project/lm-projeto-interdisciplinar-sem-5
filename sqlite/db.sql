@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
     id TEXT PRIMARY KEY,
     nome TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
-    senha TEXT NOT NULL,  -- Senha hashada
+    senha TEXT NOT NULL,
     cpf TEXT UNIQUE,
     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status TEXT CHECK(status IN ('ativo', 'inativo')) DEFAULT 'ativo',
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS jogo_generos (
 CREATE TABLE IF NOT EXISTS keys (
     id TEXT PRIMARY KEY,
     jogo_id TEXT NOT NULL,
-    codigo TEXT NOT NULL UNIQUE,  -- Armazenado criptografado
+    codigo TEXT NOT NULL UNIQUE,
     status TEXT CHECK(status IN ('disponivel', 'reservada', 'vendida', 'resgatada', 'invalida')) DEFAULT 'disponivel',
     lote TEXT NOT NULL,
     data_aquisicao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -131,47 +131,34 @@ CREATE TABLE IF NOT EXISTS biblioteca (
     FOREIGN KEY (key_id) REFERENCES keys(id)
 );
 
--- Tabela de Avaliações
-CREATE TABLE IF NOT EXISTS avaliacoes (
+-- Tabela de Interações (avaliações e comentários)
+CREATE TABLE IF NOT EXISTS interacoes (
     id TEXT PRIMARY KEY,
     usuario_id TEXT NOT NULL,
     jogo_id TEXT NOT NULL,
-    nota REAL CHECK(nota >= 0 AND nota <= 10) NOT NULL,
+    interacao_pai_id TEXT,
     titulo TEXT,
-    conteudo TEXT,
+    texto TEXT NOT NULL,
+    nota REAL CHECK(nota >= 0 AND nota <= 10),
     data_publicacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     data_edicao TIMESTAMP,
+    comprovado_compra INTEGER DEFAULT 0,
     horas_jogadas INTEGER DEFAULT 0,
     plataforma TEXT,
-    verificada BOOLEAN DEFAULT FALSE,
-    votos_util INTEGER DEFAULT 0,
-    votos_inutil INTEGER DEFAULT 0,
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
-    FOREIGN KEY (jogo_id) REFERENCES jogos(id) ON DELETE CASCADE
-);
-
--- Tabela de Comentários
-CREATE TABLE IF NOT EXISTS comentarios (
-    id TEXT PRIMARY KEY,
-    usuario_id TEXT NOT NULL,
-    jogo_id TEXT NOT NULL,
-    texto TEXT NOT NULL,
-    data_publicacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    data_edicao TIMESTAMP,
-    comentario_pai_id TEXT,
+    versao_jogo TEXT,
+    verificada INTEGER DEFAULT 0,
     votos_positivos INTEGER DEFAULT 0,
     votos_negativos INTEGER DEFAULT 0,
-    editado BOOLEAN DEFAULT FALSE,
+    editado INTEGER DEFAULT 0,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
     FOREIGN KEY (jogo_id) REFERENCES jogos(id) ON DELETE CASCADE,
-    FOREIGN KEY (comentario_pai_id) REFERENCES comentarios(id) ON DELETE CASCADE
+    FOREIGN KEY (interacao_pai_id) REFERENCES interacoes(id) ON DELETE CASCADE
 );
 
 -- Tabela de Reportes
 CREATE TABLE IF NOT EXISTS reportes (
     id TEXT PRIMARY KEY,
     conteudo_id TEXT NOT NULL,
-    tipo_conteudo TEXT CHECK(tipo_conteudo IN ('avaliacao', 'comentario')) NOT NULL,
     motivo TEXT NOT NULL,
     usuario_reporter_id TEXT NOT NULL,
     data TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -206,9 +193,7 @@ CREATE TABLE IF NOT EXISTS mensagens_ticket (
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );
 
--- Índices para melhorar performance
+-- Índices úteis
 CREATE INDEX IF NOT EXISTS idx_keys_jogo_status ON keys(jogo_id, status);
 CREATE INDEX IF NOT EXISTS idx_pedidos_usuario_status ON pedidos(usuario_id, status);
-CREATE INDEX IF NOT EXISTS idx_avaliacoes_jogo ON avaliacoes(jogo_id);
-CREATE INDEX IF NOT EXISTS idx_comentarios_jogo ON comentarios(jogo_id);
 CREATE INDEX IF NOT EXISTS idx_reportes_status ON reportes(status);
