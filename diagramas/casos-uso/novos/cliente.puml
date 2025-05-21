@@ -1,0 +1,19 @@
+@startuml cliente
+actor Cliente
+left to right direction
+
+(Buscar Jogos) --> (Filtrar por Plataforma)
+(Buscar Jogos) --> (Filtrar por Gênero)
+(Adicionar ao Carrinho) --> (Aplicar Cupom)
+(Finalizar Compra) --> (Pagar com Pix)
+(Finalizar Compra) --> (Pagar com Cartão)
+(Avaliar Jogo)
+(Abrir Ticket de Suporte)
+
+Cliente --> (Buscar Jogos)
+Cliente --> (Adicionar ao Carrinho)
+Cliente --> (Finalizar Compra)
+Cliente --> (Avaliar Jogo)
+Cliente --> (Abrir Ticket de Suporte)
+
+@enduml
