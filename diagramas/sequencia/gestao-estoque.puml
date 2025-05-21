@@ -1,0 +1,16 @@
+@startuml sequence_estoque
+actor Administrador
+participant "Painel Admin" as PA
+participant SistemaKeys
+participant Jogo
+
+Administrador -> PA: Importar lote de keys
+PA -> Administrador: Solicita arquivo CSV
+Administrador -> PA: Envia arquivo keys_jogo123.csv
+PA -> SistemaKeys: processarLote(jogoId, arquivo)
+SistemaKeys -> Jogo: verificarExistencia(jogoId)
+Jogo -> SistemaKeys: true
+SistemaKeys -> SistemaKeys: validarFormatoKeys()
+SistemaKeys -> PA: loteProcessado(sucesso: 95/100)
+PA -> Administrador: Relatório de importação
+@enduml
