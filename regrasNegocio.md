@@ -1,65 +1,102 @@
-### **1. Administração de Contatos**
-- **RN001**: Apenas administradores podem gerenciar contatos (adicionar/editar/remover entidades).  
-- **RN002**: Novos cadastros de OSC/Órgãos devem ter links validados pelo sistema (site, redes sociais).  
-- **RN003**: Dados editáveis incluem telefones, e-mails, site oficial e área de atuação.  
-- **RN004**: A remoção de entidades é definitiva e requer confirmação.  
+Aqui está o conjunto completo de **regras de negócio** para o sistema de e-commerce de keys de jogos, baseado nos diagramas anteriores:
 
 ---
 
-### **2. Gestão de Usuários**
-- **RN005**: Administradores podem promover usuários a moderadores ou banir usuários.  
-- **RN006**: Banimentos devem ter justificativa obrigatória e podem ser temporários ou permanentes.  
-- **RN007**: Ações críticas (promoção/banimento) geram logs e notificam o usuário afetado.  
+### **1. Regras de Usuário e Autenticação**
+| ID  | Regra | Descrição |
+|-----|-------|-----------|
+| RN01 | Cadastro de usuário | O email deve ser único e validado via confirmação |
+| RN02 | Hierarquia de usuários | Administradores devem ter um token de acesso especial |
+| RN03 | Banimento | Usuários com 3+ reports confirmados são automaticamente banidos |
 
 ---
 
-### **3. Gerenciamento de Posts**
-- **RN008**: Posts excluídos são mantidos no histórico por 30 dias antes de remoção definitiva.  
-- **RN009**: Publicação de posts requer validação prévia do sistema (conteúdo inadequado).  
-- **RN010**: Administradores podem arquivar posts (backup automático).  
+### **2. Regras de Jogos e Estoque**
+| ID  | Regra | Descrição |
+|-----|-------|-----------|
+| RN04 | Cadastro de jogos | Deve incluir pelo menos 1 plataforma e 1 gênero |
+| RN05 | Disponibilidade | Só mostra jogos com keys disponíveis no estoque |
+| RN06 | Validação de keys | Keys duplicadas são automaticamente rejeitadas no cadastro |
+| RN07 | Preços negativos | O sistema deve bloquear atualizações com preço ≤ 0 |
 
 ---
 
-### **4. Moderação de Conteúdo**
-- **RN011**: Moderadores podem aprovar posts, comentar ou reportar conteúdo inadequado.  
-- **RN012**: Conteúdo reportado é encaminhado ao administrador se classificado como grave (ofensivo, fake news, spam).  
+### **3. Regras de Carrinho e Pedidos**
+| ID  | Regra | Descrição |
+|-----|-------|-----------|
+| RN08 | Tempo de vida do carrinho | Carrinhos não finalizados expiram em 72h |
+| RN09 | Limite do carrinho | Máximo de 10 itens por carrinho |
+| RN10 | Cupons | Só aplicáveis em compras acima de R$ 50,00 |
+| RN11 | Conversão para pedido | O carrinho deve ter pelo menos 1 item válido |
+| RN12 | Pagamento | Pedidos não pagos em 30min são automaticamente cancelados |
 
 ---
 
-### **5. Cadastro e Autenticação de Usuários**
-- **RN013**: Cadastro requer validação de e-mail ou autenticação via Google/Facebook.  
-- **RN014**: Recuperação de senha exige confirmação por e-mail.  
+### **4. Regras de Avaliações e Comentários**
+| ID  | Regra | Descrição |
+|-----|-------|-----------|
+| RN13 | Verificação de compra | Só permite avaliação se o jogo estiver na biblioteca do usuário |
+| RN14 | Edição de reviews | Avaliações só podem ser editadas até 7 dias após publicação |
+| RN15 | Notas válidas | A nota deve estar entre 0.0 e 10.0 (inclusive) |
+| RN16 | Comentários ofensivos | Palavras-chave banidas disparam moderação automática |
+| RN17 | Ordenação | Comentários são ordenados por "% de votos úteis" por padrão |
 
 ---
 
-### **6. Comentários no Blog**
-- **RN015**: Usuários podem editar/excluir seus comentários antes da moderação.  
-- **RN016**: Comentários são moderados conforme critérios de conteúdo ofensivo ou spam.  
+### **5. Regras de Moderação**
+| ID  | Regra | Descrição |
+|-----|-------|-----------|
+| RN18 | Priorização | Reportes com 5+ flags são analisados em até 24h |
+| RN19 | Ações de moderação | Remoção de conteúdo requer justificativa registrada |
+| RN20 | Notificação | Usuários são notificados quando seu conteúdo é removido |
 
 ---
 
-### **7. Gerenciamento de Conta**
-- **RN017**: Alterações sensíveis (senha, exclusão de conta) exigem confirmação de identidade (2FA).  
-- **RN018**: Exclusão de conta remove todos os dados permanentemente (ação irreversível).  
-- **RN019**: Usuários podem exportar seus dados em formato legível.  
+### **6. Regras de Negócio Específicas**
+| ID  | Regra | Descrição |
+|-----|-------|-----------|
+| RN21 | Entrega de keys | Keys devem ser enviadas por email em até 5min após confirmação de pagamento |
+| RN22 | Reembolsos | Só permitidos para keys não resgatadas (status=vendida) |
+| RN23 | Fraude | 3+ pedidos cancelados por fraude bloqueiam o CPF |
+| RN24 | Média de avaliações | Calculada com peso 2x para avaliações verificadas |
 
 ---
 
-### **8. Jogo (Party e Personagens)**
-- **RN020**: Parties devem ter entre 1 e 4 personagens para iniciar o jogo.  
-- **RN021**: Personagens são adquiridos na loja com moedas virtuais.  
-- **RN022**: Recompensas são concedidas ao encerrar o jogo com sucesso.  
+### **7. Regras Técnicas**
+| ID  | Regra | Descrição |
+|-----|-------|-----------|
+| RN25 | Criptografia | Keys devem ser armazenadas com AES-256 |
+| RN26 | Logs | Todas as ações de admin são registradas com timestamp e IP |
+| RN27 | Backup | O banco de dados é backupado diariamente às 2AM |
 
 ---
 
-### **9. Sistema Geral**
-- **RN023**: Moderadores herdam permissões de usuários com direitos adicionais de moderação.  
-- **RN024**: Posts e comentários têm status controlados (RASCUNHO, PUBLICADO, ARQUIVADO, REMOVIDO).  
-- **RN025**: Usuários podem ter status (ATIVO, INATIVO, BANIDO, SUSPENSO) com impactos no acesso.  
+### **Regras de Negócio Prioritárias**
+1. **RN13 + RN21**: Garantem a integridade do sistema de avaliações e entrega
+2. **RN06 + RN25**: Previnem fraudes com keys duplicadas/vazadas
+3. **RN08 + RN12**: Otimizam gestão de recursos (estoque e pagamentos)
 
 ---
 
-### **Regras de Validação e Segurança**
-- **RN026**: Links e formatos de dados (e-mail, CNPJ) são validados automaticamente.  
-- **RN027**: Autenticação via redes sociais não requer senha, mas vincula à conta existente.  
-- **RN028**: Logs armazenam todas as ações administrativas para auditoria.  
+### **Exemplo de Aplicação no Código**
+```javascript
+// RN13 - Verificação de posse para avaliação
+function podeAvaliar(usuarioId, jogoId) {
+  const pedidos = await Pedidos.find({
+    usuarioId,
+    status: 'pago',
+    'itens.jogoId': jogoId
+  });
+  return pedidos.length > 0;
+}
+
+// RN21 - Entrega automática de keys
+function enviarKeys(pedidoId) {
+  const pedido = await Pedido.findById(pedidoId);
+  if (pedido.status === 'pago') {
+    const keys = await Key.find({ _id: { $in: pedido.itens.keyId } });
+    enviarEmail(pedido.usuarioId, 'Seus códigos', templateKeys(keys));
+    await Key.updateMany({ _id: { $in: keys } }, { status: 'resgatada' });
+  }
+}
+```
