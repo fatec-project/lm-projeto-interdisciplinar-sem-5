@@ -1,153 +1,214 @@
--- SQLite version
-PRAGMA foreign_keys = ON;
-
-CREATE TABLE tipo_usuario (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  tipo TEXT NOT NULL UNIQUE
+-- Tabela de Usuários
+CREATE TABLE IF NOT EXISTS usuarios (
+    id TEXT PRIMARY KEY,
+    nome TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    senha TEXT NOT NULL,  -- Senha hashada
+    cpf TEXT UNIQUE,
+    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status TEXT CHECK(status IN ('ativo', 'inativo')) DEFAULT 'ativo',
+    tipo TEXT CHECK(tipo IN ('cliente', 'admin')) NOT NULL,
+    nivel_acesso TEXT CHECK(nivel_acesso IN ('basico', 'total')) DEFAULT 'basico'
 );
 
-CREATE TABLE status_usuario (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  status TEXT NOT NULL UNIQUE
+-- Tabela de Jogos
+CREATE TABLE IF NOT EXISTS jogos (
+    id TEXT PRIMARY KEY,
+    nome TEXT NOT NULL,
+    descricao TEXT,
+    preco_base REAL CHECK(preco_base >= 0) NOT NULL,
+    desenvolvedora TEXT NOT NULL,
+    publisher TEXT,
+    data_lancamento DATE,
+    imagem_url TEXT,
+    media_avaliacoes REAL DEFAULT 0.0,
+    total_avaliacoes INTEGER DEFAULT 0
 );
 
-CREATE TABLE usuario (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  nome TEXT NOT NULL,
-  sobrenome TEXT NOT NULL,
-  email TEXT NOT NULL UNIQUE,
-  senha TEXT NOT NULL,
-  data_cadastro DATE NOT NULL DEFAULT (DATE('now')),
-  moedas INTEGER DEFAULT 0,
-  status_id INTEGER NOT NULL,
-  tipo_id INTEGER NOT NULL,
-  FOREIGN KEY (status_id) REFERENCES status_usuario(id) ON DELETE CASCADE,
-  FOREIGN KEY (tipo_id) REFERENCES tipo_usuario(id) ON DELETE CASCADE
+-- Tabela de Plataformas
+CREATE TABLE IF NOT EXISTS plataformas (
+    id TEXT PRIMARY KEY,
+    nome TEXT NOT NULL UNIQUE
 );
 
-CREATE TABLE tela (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  tela TEXT NOT NULL
+-- Tabela de Gêneros
+CREATE TABLE IF NOT EXISTS generos (
+    id TEXT PRIMARY KEY,
+    nome TEXT NOT NULL UNIQUE
 );
 
-CREATE TABLE permissoes (
-  tipo_usuario_id INTEGER,
-  tela_id INTEGER,
-  PRIMARY KEY (tipo_usuario_id, tela_id),
-  FOREIGN KEY (tipo_usuario_id) REFERENCES tipo_usuario(id) ON DELETE CASCADE,
-  FOREIGN KEY (tela_id) REFERENCES tela(id) ON DELETE CASCADE
+-- Relação Jogos-Plataformas (N-N)
+CREATE TABLE IF NOT EXISTS jogo_plataformas (
+    jogo_id TEXT NOT NULL,
+    plataforma_id TEXT NOT NULL,
+    PRIMARY KEY (jogo_id, plataforma_id),
+    FOREIGN KEY (jogo_id) REFERENCES jogos(id) ON DELETE CASCADE,
+    FOREIGN KEY (plataforma_id) REFERENCES plataformas(id) ON DELETE CASCADE
 );
 
-CREATE TABLE org (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  cnpj TEXT NOT NULL UNIQUE,
-  entidade TEXT NOT NULL,
-  telefone TEXT,
-  email TEXT,
-  site TEXT,
-  area_atuacao TEXT,
-  administrador_id INTEGER,
-  FOREIGN KEY (administrador_id) REFERENCES usuario(id) ON DELETE SET NULL
+-- Relação Jogos-Gêneros (N-N)
+CREATE TABLE IF NOT EXISTS jogo_generos (
+    jogo_id TEXT NOT NULL,
+    genero_id TEXT NOT NULL,
+    PRIMARY KEY (jogo_id, genero_id),
+    FOREIGN KEY (jogo_id) REFERENCES jogos(id) ON DELETE CASCADE,
+    FOREIGN KEY (genero_id) REFERENCES generos(id) ON DELETE CASCADE
 );
 
-CREATE TABLE rede_social_org (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  org_id INTEGER NOT NULL,
-  rede_social TEXT NOT NULL,
-  url TEXT NOT NULL,
-  FOREIGN KEY (org_id) REFERENCES org(id) ON DELETE CASCADE
+-- Tabela de Keys
+CREATE TABLE IF NOT EXISTS keys (
+    id TEXT PRIMARY KEY,
+    jogo_id TEXT NOT NULL,
+    codigo TEXT NOT NULL UNIQUE,  -- Armazenado criptografado
+    status TEXT CHECK(status IN ('disponivel', 'reservada', 'vendida', 'resgatada', 'invalida')) DEFAULT 'disponivel',
+    lote TEXT NOT NULL,
+    data_aquisicao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (jogo_id) REFERENCES jogos(id) ON DELETE CASCADE
 );
 
-CREATE TABLE status_post (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  status TEXT NOT NULL UNIQUE
+-- Tabela de Cupons
+CREATE TABLE IF NOT EXISTS cupons (
+    codigo TEXT PRIMARY KEY,
+    desconto REAL NOT NULL,
+    tipo TEXT CHECK(tipo IN ('percentual', 'valor')) NOT NULL,
+    validade TIMESTAMP,
+    usos_maximos INTEGER,
+    usos_atual INTEGER DEFAULT 0,
+    valor_minimo REAL DEFAULT 0
 );
 
-CREATE TABLE post (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  titulo TEXT NOT NULL,
-  conteudo TEXT NOT NULL,
-  autor_id INTEGER NOT NULL,
-  data_publicacao DATETIME NOT NULL DEFAULT (DATETIME('now')),
-  status_id INTEGER NOT NULL,
-  FOREIGN KEY (autor_id) REFERENCES usuario(id) ON DELETE CASCADE,
-  FOREIGN KEY (status_id) REFERENCES status_post(id) ON DELETE CASCADE
+-- Tabela de Carrinhos
+CREATE TABLE IF NOT EXISTS carrinhos (
+    id TEXT PRIMARY KEY,
+    usuario_id TEXT NOT NULL,
+    data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    cupom_aplicado TEXT,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (cupom_aplicado) REFERENCES cupons(codigo)
 );
 
-CREATE TABLE status_comentario (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  status TEXT NOT NULL UNIQUE
+-- Tabela de Itens do Carrinho
+CREATE TABLE IF NOT EXISTS itens_carrinho (
+    carrinho_id TEXT NOT NULL,
+    jogo_id TEXT NOT NULL,
+    quantidade INTEGER CHECK(quantidade > 0) DEFAULT 1,
+    preco_unitario REAL NOT NULL,
+    PRIMARY KEY (carrinho_id, jogo_id),
+    FOREIGN KEY (carrinho_id) REFERENCES carrinhos(id) ON DELETE CASCADE,
+    FOREIGN KEY (jogo_id) REFERENCES jogos(id)
 );
 
-CREATE TABLE comentario (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  conteudo TEXT NOT NULL,
-  autor_id INTEGER NOT NULL,
-  post_id INTEGER NOT NULL,
-  data_criacao DATETIME NOT NULL DEFAULT (DATETIME('now')),
-  status_id INTEGER NOT NULL,
-  FOREIGN KEY (autor_id) REFERENCES usuario(id) ON DELETE CASCADE,
-  FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE,
-  FOREIGN KEY (status_id) REFERENCES status_comentario(id) ON DELETE CASCADE
+-- Tabela de Pedidos
+CREATE TABLE IF NOT EXISTS pedidos (
+    id TEXT PRIMARY KEY,
+    usuario_id TEXT NOT NULL,
+    data TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status TEXT CHECK(status IN ('pendente', 'pago', 'cancelado', 'reembolsado')) DEFAULT 'pendente',
+    total REAL NOT NULL,
+    metodo_pagamento TEXT NOT NULL,
+    transacao_id TEXT,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );
 
-CREATE TABLE status_party (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  status TEXT NOT NULL UNIQUE
+-- Tabela de Itens do Pedido
+CREATE TABLE IF NOT EXISTS itens_pedido (
+    pedido_id TEXT NOT NULL,
+    key_id TEXT NOT NULL,
+    preco_unitario REAL NOT NULL,
+    desconto REAL DEFAULT 0,
+    PRIMARY KEY (pedido_id, key_id),
+    FOREIGN KEY (pedido_id) REFERENCES pedidos(id) ON DELETE CASCADE,
+    FOREIGN KEY (key_id) REFERENCES keys(id)
 );
 
-CREATE TABLE party (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  jogador_id INTEGER NOT NULL,
-  status_id INTEGER NOT NULL,
-  FOREIGN KEY (jogador_id) REFERENCES usuario(id) ON DELETE CASCADE,
-  FOREIGN KEY (status_id) REFERENCES status_party(id) ON DELETE CASCADE
+-- Tabela de Biblioteca do Usuário
+CREATE TABLE IF NOT EXISTS biblioteca (
+    usuario_id TEXT NOT NULL,
+    key_id TEXT NOT NULL,
+    data_resgate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (usuario_id, key_id),
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (key_id) REFERENCES keys(id)
 );
 
-CREATE TABLE personagem (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  nome TEXT NOT NULL,
-  vida INTEGER NOT NULL,
-  ataque INTEGER NOT NULL,
-  velocidade INTEGER NOT NULL,
-  preco INTEGER NOT NULL
+-- Tabela de Avaliações
+CREATE TABLE IF NOT EXISTS avaliacoes (
+    id TEXT PRIMARY KEY,
+    usuario_id TEXT NOT NULL,
+    jogo_id TEXT NOT NULL,
+    nota REAL CHECK(nota >= 0 AND nota <= 10) NOT NULL,
+    titulo TEXT,
+    conteudo TEXT,
+    data_publicacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    data_edicao TIMESTAMP,
+    horas_jogadas INTEGER DEFAULT 0,
+    plataforma TEXT,
+    verificada BOOLEAN DEFAULT FALSE,
+    votos_util INTEGER DEFAULT 0,
+    votos_inutil INTEGER DEFAULT 0,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (jogo_id) REFERENCES jogos(id) ON DELETE CASCADE
 );
 
-CREATE TABLE party_personagem (
-  party_id INTEGER NOT NULL,
-  personagem_id INTEGER NOT NULL,
-  PRIMARY KEY (party_id, personagem_id),
-  FOREIGN KEY (party_id) REFERENCES party(id) ON DELETE CASCADE,
-  FOREIGN KEY (personagem_id) REFERENCES personagem(id) ON DELETE CASCADE
+-- Tabela de Comentários
+CREATE TABLE IF NOT EXISTS comentarios (
+    id TEXT PRIMARY KEY,
+    usuario_id TEXT NOT NULL,
+    jogo_id TEXT NOT NULL,
+    texto TEXT NOT NULL,
+    data_publicacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    data_edicao TIMESTAMP,
+    comentario_pai_id TEXT,
+    votos_positivos INTEGER DEFAULT 0,
+    votos_negativos INTEGER DEFAULT 0,
+    editado BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (jogo_id) REFERENCES jogos(id) ON DELETE CASCADE,
+    FOREIGN KEY (comentario_pai_id) REFERENCES comentarios(id) ON DELETE CASCADE
 );
 
-CREATE TABLE loja (
-  id INTEGER PRIMARY KEY AUTOINCREMENT
+-- Tabela de Reportes
+CREATE TABLE IF NOT EXISTS reportes (
+    id TEXT PRIMARY KEY,
+    conteudo_id TEXT NOT NULL,
+    tipo_conteudo TEXT CHECK(tipo_conteudo IN ('avaliacao', 'comentario')) NOT NULL,
+    motivo TEXT NOT NULL,
+    usuario_reporter_id TEXT NOT NULL,
+    data TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status TEXT CHECK(status IN ('pendente', 'analisado', 'rejeitado')) DEFAULT 'pendente',
+    acao_tomada TEXT,
+    admin_responsavel TEXT,
+    FOREIGN KEY (usuario_reporter_id) REFERENCES usuarios(id),
+    FOREIGN KEY (admin_responsavel) REFERENCES usuarios(id)
 );
 
-CREATE TABLE loja_personagem (
-  loja_id INTEGER NOT NULL,
-  personagem_id INTEGER NOT NULL,
-  disponivel INTEGER DEFAULT 1, -- SQLite uses integers for booleans (1=true, 0=false)
-  PRIMARY KEY (loja_id, personagem_id),
-  FOREIGN KEY (loja_id) REFERENCES loja(id) ON DELETE CASCADE,
-  FOREIGN KEY (personagem_id) REFERENCES personagem(id) ON DELETE CASCADE
+-- Tabela de Tickets de Suporte
+CREATE TABLE IF NOT EXISTS tickets (
+    id TEXT PRIMARY KEY,
+    usuario_id TEXT NOT NULL,
+    titulo TEXT NOT NULL,
+    mensagem TEXT NOT NULL,
+    data TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status TEXT CHECK(status IN ('aberto', 'em_andamento', 'resolvido', 'fechado')) DEFAULT 'aberto',
+    pedido_id TEXT,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (pedido_id) REFERENCES pedidos(id)
 );
 
-CREATE TABLE usuario_personagem (
-  usuario_id INTEGER NOT NULL,
-  personagem_id INTEGER NOT NULL,
-  data_compra DATETIME NOT NULL DEFAULT (DATETIME('now')),
-  PRIMARY KEY (usuario_id, personagem_id),
-  FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE,
-  FOREIGN KEY (personagem_id) REFERENCES personagem(id) ON DELETE CASCADE
+-- Tabela de Mensagens de Suporte
+CREATE TABLE IF NOT EXISTS mensagens_ticket (
+    id TEXT PRIMARY KEY,
+    ticket_id TEXT NOT NULL,
+    usuario_id TEXT NOT NULL,
+    texto TEXT NOT NULL,
+    data TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ticket_id) REFERENCES tickets(id) ON DELETE CASCADE,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );
 
-CREATE TABLE log (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  usuario_id INTEGER,
-  acao TEXT NOT NULL,
-  data_hora DATETIME NOT NULL DEFAULT (DATETIME('now')),
-  detalhes TEXT,
-  FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE SET NULL
-);
+-- Índices para melhorar performance
+CREATE INDEX IF NOT EXISTS idx_keys_jogo_status ON keys(jogo_id, status);
+CREATE INDEX IF NOT EXISTS idx_pedidos_usuario_status ON pedidos(usuario_id, status);
+CREATE INDEX IF NOT EXISTS idx_avaliacoes_jogo ON avaliacoes(jogo_id);
+CREATE INDEX IF NOT EXISTS idx_comentarios_jogo ON comentarios(jogo_id);
+CREATE INDEX IF NOT EXISTS idx_reportes_status ON reportes(status);
