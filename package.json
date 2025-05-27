@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0",
+    "jest": "^30.0.0-beta.3",
+    "sqlite3": "^5.1.7",
+    "supertest": "^7.1.1"
+  }
+}
