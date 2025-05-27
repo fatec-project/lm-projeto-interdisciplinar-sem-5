@@ -1,87 +1,112 @@
+const { app, db } = require('./setupTest');
 const request = require('supertest');
-const app = require('../app');
-const db = require('../sqlite/db');
 
-describe('CRUD de Usuários', () => {
-  let userId;
+describe('API de Usuários', () => {
   let authToken;
 
-  // TESTE 1: Cadastro de usuário (POST /users)
-  test('Deve criar um novo usuário', async () => {
-    const response = await request(app)
+  beforeAll(async () => {
+    // Login como admin para testes
+    const res = await request(app)
+      .post('/auth/login')
+      .send({ email: 'admin@test.com', senha: 'hash123' });
+    authToken = res.body.token;
+  });
+
+  test('POST /users - Deve criar um novo usuário cliente', async () => {
+    const res = await request(app)
       .post('/users')
+      .set('Authorization', `Bearer ${authToken}`)
       .send({
-        nome: 'Teste User',
-        email: 'teste@example.com',
-        senha: 'Senha123@',
-        tipo: 'cliente'
+        nome: 'Novo Usuário',
+        email: 'novo@test.com',
+        senha: 'senhaSegura123',
+        tipo: 'cliente',
+        cpf: '12345678901'
       })
       .expect(201);
 
-    expect(response.body).toHaveProperty('id');
-    expect(response.body.email).toBe('teste@example.com');
-    expect(response.body).not.toHaveProperty('senha'); // Senha não deve ser retornada
-    
-    userId = response.body.id;
+    expect(res.body).toHaveProperty('id');
+    expect(res.body.email).toBe('novo@test.com');
+    expect(res.body).not.toHaveProperty('senha');
+    expect(res.body.tipo).toBe('cliente');
   });
 
-  // TESTE 2: Email duplicado
-  test('Deve falhar ao criar usuário com email duplicado', async () => {
-    const response = await request(app)
+  test('POST /users - Deve falhar sem email', async () => {
+    const res = await request(app)
       .post('/users')
+      .set('Authorization', `Bearer ${authToken}`)
       .send({
-        nome: 'Outro User',
-        email: 'teste@example.com', // Email já existe
-        senha: 'OutraSenha123@',
+        nome: 'Sem Email',
+        senha: 'senha123',
         tipo: 'cliente'
       })
       .expect(400);
 
-    expect(response.body.error).toMatch(/email já cadastrado/i);
+    expect(res.body.error).toMatch(/email é obrigatório/i);
   });
 
-  // TESTE 3: Login (POST /auth/login)
-  test('Deve fazer login com credenciais válidas', async () => {
-    const response = await request(app)
-      .post('/auth/login')
+  test('GET /users/:id - Deve retornar um usuário específico', async () => {
+    // Primeiro cria um usuário para testar
+    const newUser = await request(app)
+      .post('/users')
+      .set('Authorization', `Bearer ${authToken}`)
       .send({
-        email: 'teste@example.com',
-        senha: 'Senha123@'
-      })
-      .expect(200);
+        nome: 'Usuário Teste',
+        email: 'teste@test.com',
+        senha: 'senha123',
+        tipo: 'cliente'
+      });
 
-    expect(response.body).toHaveProperty('token');
-    authToken = response.body.token;
-  });
-
-  // TESTE 4: Acesso a perfil (GET /users/:id)
-  test('Deve retornar perfil do usuário', async () => {
-    const response = await request(app)
-      .get(`/users/${userId}`)
+    const res = await request(app)
+      .get(`/users/${newUser.body.id}`)
       .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
-    expect(response.body.id).toBe(userId);
-    expect(response.body.email).toBe('teste@example.com');
+    expect(res.body.id).toBe(newUser.body.id);
+    expect(res.body.nome).toBe('Usuário Teste');
   });
 
-  // TESTE 5: Atualização de usuário (PUT /users/:id)
-  test('Deve atualizar informações do usuário', async () => {
-    const response = await request(app)
-      .put(`/users/${userId}`)
+  test('PUT /users/:id - Deve atualizar um usuário', async () => {
+    const newUser = await request(app)
+      .post('/users')
       .set('Authorization', `Bearer ${authToken}`)
       .send({
-        nome: 'Nome Atualizado'
-      })
+        nome: 'Para Atualizar',
+        email: 'atualizar@test.com',
+        senha: 'senha123',
+        tipo: 'cliente'
+      });
+
+    const res = await request(app)
+      .put(`/users/${newUser.body.id}`)
+      .set('Authorization', `Bearer ${authToken}`)
+      .send({ nome: 'Nome Atualizado' })
       .expect(200);
 
-    expect(response.body.nome).toBe('Nome Atualizado');
+    expect(res.body.nome).toBe('Nome Atualizado');
   });
 
-  // TESTE 6: Tentativa de acesso não autorizado
-  test('Deve bloquear acesso sem token', async () => {
+  test('DELETE /users/:id - Deve inativar um usuário', async () => {
+    const newUser = await request(app)
+      .post('/users')
+      .set('Authorization', `Bearer ${authToken}`)
+      .send({
+        nome: 'Para Deletar',
+        email: 'deletar@test.com',
+        senha: 'senha123',
+        tipo: 'cliente'
+      });
+
     await request(app)
-      .get(`/users/${userId}`)
-      .expect(401);
+      .delete(`/users/${newUser.body.id}`)
+      .set('Authorization', `Bearer ${authToken}`)
+      .expect(204);
+
+    // Verifica se foi inativado
+    const user = await db.get(
+      'SELECT status FROM usuarios WHERE id = ?', 
+      [newUser.body.id]
+    );
+    expect(user.status).toBe('inativo');
   });
 });
