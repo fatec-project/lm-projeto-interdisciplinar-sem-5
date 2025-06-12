@@ -1,7 +1,11 @@
-const Amigo = require('../../model/Amigo');
+import Amigo from '../../model/Amigo.js';
 
 describe('A classe de entidade Amigo', () => {
-  const amigo = new Amigo;
+  let amigo;
+  
+  beforeEach(() => {
+    amigo = new Amigo();
+  });
 
   it('Deve possuir métodos getter e setter de usuario1Id', () => {
     amigo.setUsuario1Id(1);
