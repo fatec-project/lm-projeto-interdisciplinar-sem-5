@@ -1,7 +1,6 @@
 export default class Biblioteca {
   usuarioId;
   jogoId;
-  foiPresente;
 
   getUsuarioId() {
     return this.usuarioId;
@@ -17,13 +16,5 @@ export default class Biblioteca {
 
   setJogoId(jogoId) {
     this.jogoId = jogoId;
-  }
-
-  getFoiPresente() {
-    return this.foiPresente;
-  }
-
-  setFoiPresente(foiPresente) {
-    this.foiPresente = foiPresente;
   }
 }

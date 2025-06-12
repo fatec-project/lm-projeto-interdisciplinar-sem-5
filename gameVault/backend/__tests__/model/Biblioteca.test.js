@@ -12,9 +12,4 @@ describe('A classe de entidade Biblioteca', () => {
     biblioteca.setJogoId(1);
     expect(biblioteca.getJogoId()).toBe(1);
   });
-
-  it('Deve possuir métodos getter e setter de foiPresente', () => {
-    biblioteca.setFoiPresente(false);
-    expect(biblioteca.getFoiPresente()).toBe(false);
-  });
 });
