@@ -1,4 +1,4 @@
-const Biblioteca = require('../../model/Biblioteca');
+import Biblioteca from '../../model/Biblioteca';
 
 describe('A classe de entidade Biblioteca', () => {
   const biblioteca = new Biblioteca;
