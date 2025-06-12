@@ -1,4 +1,4 @@
-const Carrinho = require('../../model/Carrinho');
+import Carrinho from '../../model/Carrinho';
 
 describe('A classe de entidade Carrinho', () => {
   const carrinho = new Carrinho;
