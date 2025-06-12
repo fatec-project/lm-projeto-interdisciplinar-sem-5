@@ -7,12 +7,12 @@ describe('A classe de entidade Amigo', () => {
     amigo = new Amigo();
   });
 
-  it('Deve possuir métodos getter e setter de usuario1Id', () => {
+  it('Deve possuir métodos getter e setter de Usuario1Id', () => {
     amigo.setUsuario1Id(1);
     expect(amigo.getUsuario1Id()).toBe(1);
   });
 
-  it('Deve possuir métodos getter e setter de usuario2Id', () => {
+  it('Deve possuir métodos getter e setter de Usuario2Id', () => {
     amigo.setUsuario2Id(2);
     expect(amigo.getUsuario2Id()).toBe(2);
   });
