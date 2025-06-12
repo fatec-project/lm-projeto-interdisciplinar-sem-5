@@ -1,4 +1,4 @@
-const Usuario = require('../../model/Usuario');
+import Usuario from '../../model/Usuario';
 
 describe('A classe de entidade Usuario', () => {
   const usuario = new Usuario;

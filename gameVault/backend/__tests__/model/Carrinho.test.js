@@ -1,14 +1,14 @@
-const Carrinho = require('../../model/Carrinho');
+import Carrinho from '../../model/Carrinho';
 
 describe('A classe de entidade Carrinho', () => {
   const carrinho = new Carrinho;
 
-  it('Deve possuir métodos getter e setter de usuarioId', () => {
+  it('Deve possuir métodos getter e setter de UsuarioId', () => {
     carrinho.setUsuarioId(1);
     expect(carrinho.getUsuarioId()).toBe(1);
   });
 
-  it('Deve possuir métodos getter e setter de jogoId', () => {
+  it('Deve possuir métodos getter e setter de JogoId', () => {
     carrinho.setJogoId(1);
     expect(carrinho.getJogoId()).toBe(1);
   });
