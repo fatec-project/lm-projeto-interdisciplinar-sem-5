@@ -1,4 +1,4 @@
-const Jogo = require('../../model/Jogo');
+import Jogo from '../../model/Jogo';
 
 describe('A classe de entidade Jogo', () => {
   const jogo = new Jogo;
