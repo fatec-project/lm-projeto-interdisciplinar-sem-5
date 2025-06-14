@@ -82,7 +82,8 @@ export default class Usuario {
     return {
       id: this.id,
       nome: this.nome,
-      email: this.email
+      email: this.email,
+      senha: this.senha
     };
   }
 }

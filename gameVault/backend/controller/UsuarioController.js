@@ -42,7 +42,6 @@ export default class UsuarioController {
         (u.email === identificador || u.nome === identificador) && 
         u.senha === senha
       );
-      
       if (!usuario) {
         throw new Error('Credenciais inválidas');
       }

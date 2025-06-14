@@ -15,7 +15,7 @@ const LoginScreen = ({ navigation }) => {
 
     setLoading(true);
     try {
-      const usuario = await GameVaultAPI.usuarios.login(identificador, senha);
+      const usuario = await GameVaultAPI.usuarios.login({ identificador: identificador, senha: senha });
       navigation.replace('Store');
     } catch (error) {
       Alert.alert('Erro', error.message || 'Falha no login');
@@ -41,7 +41,6 @@ const LoginScreen = ({ navigation }) => {
         placeholder="Senha"
         value={senha}
         onChangeText={setSenha}
-        secureTextEntry
       />
       
       <TouchableOpacity 

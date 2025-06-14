@@ -16,7 +16,7 @@ const RegisterScreen = ({ navigation }) => {
 
     setLoading(true);
     try {
-      const usuario = await GameVaultAPI.usuarios.criar(nome, email, senha);
+      const usuario = await GameVaultAPI.usuarios.criar({ nome: nome, email: email, senha: senha });
       Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
       navigation.replace('Store');
     } catch (error) {
@@ -51,7 +51,6 @@ const RegisterScreen = ({ navigation }) => {
         placeholder="Senha"
         value={senha}
         onChangeText={setSenha}
-        secureTextEntry
       />
       
       <TouchableOpacity 

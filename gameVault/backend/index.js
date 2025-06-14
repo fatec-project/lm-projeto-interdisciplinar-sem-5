@@ -28,8 +28,8 @@ const GameVaultAPI = {
   },
 
   usuarios: {
-    criar: (nome, email, senha) => usuarioController.criar(nome, email, senha),
-    login: (identificador, senha) => usuarioController.login(identificador, senha),
+    criar: ({ nome, email, senha }) => usuarioController.criar(nome, email, senha),
+    login: ({ identificador, senha }) => usuarioController.login(identificador, senha),
     listar: () => usuarioController.listar(),
     buscar: (id) => usuarioController.buscarPorId(id),
     atualizar: (id, dados) => usuarioController.atualizar(id, dados),
