@@ -1,20 +1,15 @@
 export default class Carrinho {
-  usuarioId;
-  jogoId;
 
-  getUsuarioId() {
-    return this.usuarioId;
-  }
-
-  setUsuarioId(usuarioId) {
+  constructor(usuarioId, jogoId) {
     this.usuarioId = usuarioId;
-  }
-
-  getJogoId() {
-    return this.jogoId;
-  }
-
-  setJogoId(jogoId) {
     this.jogoId = jogoId;
   }
+
+  isValid() {
+    return (
+        Number.isInteger(this.usuarioId) && this.usuarioId > 0 &&
+        Number.isInteger(this.jogoId) && this.jogoId > 0
+    );
+  }
+
 }
