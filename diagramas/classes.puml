@@ -1,0 +1,95 @@
+@startuml classes
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+package "Model" {
+  class Avaliacao {
+    + jogoId: number
+    + usuarioId: number
+    + gostou: boolean
+    + isValid(): boolean
+    + toJSON(): object
+  }
+  
+  class Biblioteca {
+    + usuarioId: number
+    + jogoId: number
+    + dataAdicao: Date
+    + isValid(): boolean
+  }
+  
+  class Carrinho {
+    + usuarioId: number
+    + jogoId: number
+    + quantidade: number
+    + incrementarQuantidade(): number
+  }
+  
+  class ListaDesejos {
+    + usuarioId: number
+    + jogoId: number
+    + dataAdicao: Date
+  }
+  
+  class Usuario {
+    + id: number
+    + nome: string
+    + email: string
+    + senha: string
+    + toSafeObject(): object
+  }
+}
+
+package "Controller" {
+  class AvaliacaoController {
+    + avaliar(jogoId, usuarioId, gostou)
+    + getAvaliacoesByJogo(jogoId)
+  }
+  
+  class BibliotecaController {
+    + adicionar(usuarioId, jogoId)
+    + remover(usuarioId, jogoId)
+  }
+  
+  class CarrinhoController {
+    + addItem(usuarioId, jogoId, quantidade)
+    + removeItem(usuarioId, jogoId)
+  }
+  
+  class ListaDesejosController {
+    + adicionar(usuarioId, jogoId)
+    + remover(usuarioId, jogoId)
+  }
+
+  class UsuarioController {
+    + criar(nome, email, senha)
+    + atualizar(id, nome, email, senha)
+  }
+}
+
+package "View" {
+  interface "Frontend" {
+    + exibirListaJogos()
+    + exibirCarrinho()
+  }
+}
+
+AvaliacaoController --> Avaliacao
+BibliotecaController --> Biblioteca
+CarrinhoController --> Carrinho
+ListaDesejosController --> ListaDesejos
+UsuarioController --> Usuario
+
+"Frontend" --> AvaliacaoController
+"Frontend" --> BibliotecaController
+"Frontend" --> CarrinhoController
+"Frontend" --> ListaDesejosController
+"Frontend" --> UsuarioController
+
+note bottom of Model
+  Classes de modelo contêm:
+  - Atributos tipados
+  - Métodos de validação
+  - Métodos de serialização
+end note
+@enduml
