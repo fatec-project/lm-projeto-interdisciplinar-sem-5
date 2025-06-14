@@ -1,30 +1,35 @@
-import * as AvaliacaoController from './controller/AvaliacaoController.js';
-import * as BibliotecaController from './controller/BibliotecaController.js';
-import * as CarrinhoController from './controller/CarrinhoController.js';
+import AvaliacaoController from './controller/AvaliacaoController.js';
+import BibliotecaController from './controller/BibliotecaController.js';
+import CarrinhoController from './controller/CarrinhoController.js';
 import UsuarioController from './controller/UsuarioController.js';
-import * as ListaDesejosController from './controller/ListaDesejosController.js';
+import ListaDesejosController from './controller/ListaDesejosController.js';
 
-const usuarioController = new UsuarioController;
+// Instâncias dos controllers
+const usuarioController = new UsuarioController();
+const avaliacaoController = new AvaliacaoController();
+const bibliotecaController = new BibliotecaController();
+const carrinhoController = new CarrinhoController();
+const listaDesejosController = new ListaDesejosController();
 
 const GameVaultAPI = {
   avaliacoes: {
-    criar: (jogoId, usuarioId, gostou) => AvaliacaoController.avaliar(jogoId, usuarioId, gostou),
-    listarPorJogo: (jogoId) => AvaliacaoController.getAvaliacoesByJogo(jogoId),
-    buscar: (usuarioId, jogoId) => AvaliacaoController.getAvaliacao(usuarioId, jogoId),
-    remover: (usuarioId, jogoId) => AvaliacaoController.remover(usuarioId, jogoId)
+    criar: (jogoId, usuarioId, gostou) => avaliacaoController.avaliar(jogoId, usuarioId, gostou),
+    listarPorJogo: (jogoId) => avaliacaoController.getAvaliacoesByJogo(jogoId),
+    buscar: (usuarioId, jogoId) => avaliacaoController.getAvaliacao(usuarioId, jogoId),
+    remover: (usuarioId, jogoId) => avaliacaoController.remover(usuarioId, jogoId)
   },
 
   biblioteca: {
-    adicionar: (usuarioId, jogoId) => BibliotecaController.adicionar(usuarioId, jogoId),
-    listar: (usuarioId) => BibliotecaController.getBibliotecaByUsuario(usuarioId),
-    remover: (usuarioId, jogoId) => BibliotecaController.remover(usuarioId, jogoId)
+    adicionar: (usuarioId, jogoId) => bibliotecaController.adicionar(usuarioId, jogoId),
+    listar: (usuarioId) => bibliotecaController.getBibliotecaByUsuario(usuarioId),
+    remover: (usuarioId, jogoId) => bibliotecaController.remover(usuarioId, jogoId)
   },
 
   carrinho: {
-    adicionar: (usuarioId, jogoId, quantidade) => CarrinhoController.addItem(usuarioId, jogoId, quantidade),
-    listar: (usuarioId) => CarrinhoController.getCarrinhoByUsuario(usuarioId),
-    remover: (usuarioId, jogoId) => CarrinhoController.removeItem(usuarioId, jogoId),
-    limpar: (usuarioId) => CarrinhoController.clearCarrinho(usuarioId)
+    adicionar: (usuarioId, jogoId, quantidade) => carrinhoController.addItem(usuarioId, jogoId, quantidade),
+    listar: (usuarioId) => carrinhoController.getCarrinhoByUsuario(usuarioId),
+    remover: (usuarioId, jogoId) => carrinhoController.removeItem(usuarioId, jogoId),
+    limpar: (usuarioId) => carrinhoController.clearCarrinho(usuarioId)
   },
 
   usuarios: {
@@ -37,10 +42,10 @@ const GameVaultAPI = {
   },
 
   listaDesejos: {
-    adicionar: (usuarioId, jogoId) => ListaDesejosController.adicionar(usuarioId, jogoId),
-    listar: (usuarioId) => ListaDesejosController.getListaByUsuario(usuarioId),
-    remover: (usuarioId, jogoId) => ListaDesejosController.remover(usuarioId, jogoId),
-    limpar: (usuarioId) => ListaDesejosController.limparLista(usuarioId)
+    adicionar: (usuarioId, jogoId) => listaDesejosController.adicionar(usuarioId, jogoId),
+    listar: (usuarioId) => listaDesejosController.getListaByUsuario(usuarioId),
+    remover: (usuarioId, jogoId) => listaDesejosController.remover(usuarioId, jogoId),
+    limpar: (usuarioId) => listaDesejosController.limparLista(usuarioId)
   },
 
   utils: {
@@ -54,8 +59,16 @@ const GameVaultAPI = {
   }
 };
 
+// Inicialização assíncrona
 async function inicializar() {
   try {
+    await Promise.all([
+      usuarioController.initializeDatabase(),
+      avaliacaoController.initializeDatabase(),
+      bibliotecaController.initializeDatabase(),
+      carrinhoController.initializeDatabase(),
+      listaDesejosController.initializeDatabase()
+    ]);
     console.log('API GameVault inicializada com sucesso');
   } catch (error) {
     console.error('Erro na inicialização:', error);

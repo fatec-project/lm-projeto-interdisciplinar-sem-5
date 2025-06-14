@@ -21,7 +21,7 @@ export default class AvaliacaoController {
       const avaliacoes = (await db.getItem(COLLECTION)) || [];
       
       const index = avaliacoes.findIndex(
-        a => a.jogoId === avaliacao.jogoId && a.usuarioId === avaliacao.usuarioId
+        a => a.jogoId === Number(avaliacao.jogoId) && a.usuarioId === Number(avaliacao.usuarioId)
       );
 
       if (index !== -1) {
@@ -39,23 +39,44 @@ export default class AvaliacaoController {
   }
 
   async getAvaliacoesByJogo(jogoId) {
-    const avaliacoes = (await db.getItem(COLLECTION)) || [];
-    return avaliacoes.filter(a => a.jogoId === Number(jogoId));
+    try {
+      const avaliacoes = (await db.getItem(COLLECTION)) || [];
+      return avaliacoes.filter(a => a.jogoId === Number(jogoId));
+    } catch (error) {
+      console.error('Erro ao buscar avaliações:', error);
+      throw error;
+    }
   }
 
   async getAvaliacao(usuarioId, jogoId) {
-    const avaliacoes = (await db.getItem(COLLECTION)) || [];
-    return avaliacoes.find(
-      a => a.jogoId === Number(jogoId) && a.usuarioId === Number(usuarioId)
-    ) || null;
+    try {
+      const avaliacoes = (await db.getItem(COLLECTION)) || [];
+      const avaliacao = avaliacoes.find(
+        a => a.jogoId === Number(jogoId) && a.usuarioId === Number(usuarioId)
+      );
+      return avaliacao || null;
+    } catch (error) {
+      console.error('Erro ao buscar avaliação:', error);
+      throw error;
+    }
   }
 
   async remover(usuarioId, jogoId) {
-    const avaliacoes = (await db.getItem(COLLECTION)) || [];
-    const atualizado = avaliacoes.filter(
-      a => !(a.usuarioId === Number(usuarioId) && a.jogoId === Number(jogoId))
-    );
-    await db.setItem(COLLECTION, atualizado);
-    return true;
+    try {
+      const avaliacoes = (await db.getItem(COLLECTION)) || [];
+      const atualizado = avaliacoes.filter(
+        a => !(a.usuarioId === Number(usuarioId) && a.jogoId === Number(jogoId))
+      );
+      
+      if (avaliacoes.length === atualizado.length) {
+        throw new Error('Avaliação não encontrada');
+      }
+      
+      await db.setItem(COLLECTION, atualizado);
+      return true;
+    } catch (error) {
+      console.error('Erro ao remover avaliação:', error);
+      throw error;
+    }
   }
-};
+}

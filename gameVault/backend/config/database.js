@@ -1,6 +1,6 @@
 import { Platform } from 'react-native';
 
-// Configuração do armazenamento
+// Configuração do armazenamento universal
 let storage;
 
 if (Platform.OS === 'web') {

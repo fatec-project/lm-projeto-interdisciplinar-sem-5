@@ -9,15 +9,10 @@ export default class UsuarioController {
   }
 
   async initializeDatabase() {
-    // Garante que a coleção existe
     const usuarios = await db.getItem(COLLECTION);
     if (!usuarios) {
       await db.setItem(COLLECTION, []);
     }
-  }
-
-  generateId(usuarios) {
-    return usuarios.length > 0 ? Math.max(...usuarios.map(u => u.id)) + 1 : 1;
   }
 
   async criar(nome, email, senha) {
@@ -25,21 +20,22 @@ export default class UsuarioController {
       const usuario = new Usuario(nome, email, senha);
       const usuarios = (await db.getItem(COLLECTION)) || [];
       
-      // Verifica se email já existe
       if (usuarios.some(u => u.email.toLowerCase() === usuario.email.toLowerCase())) {
         throw new Error('Email já cadastrado');
       }
 
-      // Gera ID único
       usuario.id = this.generateId(usuarios);
       usuarios.push(usuario);
-      
       await db.setItem(COLLECTION, usuarios);
       return usuario.toSafeObject();
     } catch (error) {
       console.error('Erro ao criar usuário:', error);
       throw error;
     }
+  }
+
+  generateId(usuarios) {
+    return usuarios.length > 0 ? Math.max(...usuarios.map(u => u.id)) + 1 : 1;
   }
 
   async listar() {
@@ -83,7 +79,6 @@ export default class UsuarioController {
         throw new Error('Usuário não encontrado');
       }
 
-      // Verifica se o novo email já existe (exceto para o próprio usuário)
       if (dados.email && usuarios.some((u, i) => 
         i !== index && u.email.toLowerCase() === dados.email.toLowerCase()
       )) {
