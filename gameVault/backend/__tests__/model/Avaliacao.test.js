@@ -1,20 +1,17 @@
 import Avaliacao from '../../model/Avaliacao';
 
 describe('A classe de entidade Avaliacao', () => {
-  const avaliacao = new Avaliacao;
+  const avaliacaoCorreto = new Avaliacao(1, 1, true);
+  const avaliacaoInvalido = new Avaliacao('1', -1, 'false');
 
-  it('Deve possuir métodos getter e setter de JogoId', () => {
-    avaliacao.setJogoId(1);
-    expect(avaliacao.getJogoId()).toBe(1);
+  it('Deve construir um objeto à partir dos parâmetros do construtor', () => {
+    expect(avaliacaoCorreto.usuarioId).toBe(1);
+    expect(avaliacaoCorreto.jogoId).toBe(1);
+    expect(avaliacaoCorreto.gostou).toBe(true);
   });
 
-  it('Deve possuir métodos getter e setter de UsuarioId', () => {
-    avaliacao.setUsuarioId(1);
-    expect(avaliacao.getUsuarioId()).toBe(1);
-  });
-
-  it('Deve possuir métodos getter e setter de Gostou', () => {
-    avaliacao.setGostou(true);
-    expect(avaliacao.getGostou()).toBe(true);
+  it('Deve validar os valores passados para o seu construtor', () => {
+    expect(avaliacaoCorreto.isValid()).toBe(true);
+    expect(avaliacaoInvalido.isValid()).toBe(false);
   });
 });
