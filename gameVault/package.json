@@ -1,27 +1,30 @@
 {
   "name": "gamevault",
   "version": "1.0.0",
-  "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --detectOpenHandles --watch",
-    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --detectOpenHandles --coverage"
+    "test": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:watch": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
+    "test:coverage": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --coverage"
   },
   "dependencies": {
     "expo": "~53.0.11",
     "expo-sqlite": "^15.2.12",
     "expo-status-bar": "~2.2.3",
+    "localforage": "^1.10.0",
     "react": "19.0.0",
     "react-native": "0.79.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@babel/preset-env": "^7.27.2",
     "jest": "^30.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {},
+    "roots": ["./backend"],
+    "testRegex": ".*\\.test\\.js$"
   },
   "private": true
 }

@@ -1,26 +1,26 @@
 /**
- * Classe que representa a relação entre um usuário e um jogo na biblioteca
+ * Classe que representa um item na lista de desejos
  * @class
  * @throws {Error} Se os parâmetros de construção forem inválidos
  */
-export default class Biblioteca {
+export default class ListaDesejos {
   /**
-   * Cria uma instância de Biblioteca
+   * Cria uma instância de ListaDesejos
    * @param {number|string} usuarioId - ID do usuário (deve ser inteiro positivo ou string numérica)
    * @param {number|string} jogoId - ID do jogo (deve ser inteiro positivo ou string numérica)
    */
   constructor(usuarioId, jogoId) {
-    if (!Biblioteca.isValid(usuarioId, jogoId)) {
+    if (!ListaDesejos.isValid(usuarioId, jogoId)) {
       throw new Error(`Parâmetros inválidos: usuarioId=${usuarioId}, jogoId=${jogoId}`);
     }
 
     this.usuarioId = Number(usuarioId);
     this.jogoId = Number(jogoId);
-    this.dataAdicao = new Date(); // Adicionado campo de data como exemplo de melhoria
+    this.dataAdicao = new Date();
   }
 
   /**
-   * Valida os parâmetros de uma entrada na biblioteca
+   * Valida os parâmetros de um item da lista de desejos
    * @static
    * @returns {boolean} True se todos os parâmetros são válidos
    */
@@ -36,15 +36,15 @@ export default class Biblioteca {
    * @returns {boolean} Retorna true se todos os campos são válidos
    */
   isValid() {
-    return Biblioteca.isValid(this.usuarioId, this.jogoId);
+    return ListaDesejos.isValid(this.usuarioId, this.jogoId);
   }
 
   /**
-   * Retorna uma representação em string da biblioteca
+   * Retorna uma representação em string da lista de desejos
    * @returns {string} Representação formatada
    */
   toString() {
-    return `Biblioteca: usuarioId=${this.usuarioId}, jogoId=${this.jogoId}, dataAdicao=${this.dataAdicao.toISOString()}`;
+    return `ListaDesejos: usuarioId=${this.usuarioId}, jogoId=${this.jogoId}, dataAdicao=${this.dataAdicao.toISOString()}`;
   }
 
   /**
