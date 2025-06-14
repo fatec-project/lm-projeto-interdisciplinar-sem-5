@@ -1,0 +1,43 @@
+@startuml arquitetural
+skinparam monochrome true
+skinparam nodesep 50
+skinparam ranksep 50
+
+rectangle "Frontend (Mobile)" {
+  [React Native] as react
+  [Expo] as expo
+}
+
+rectangle "Backend (Node.js)" {
+  [Controllers] as controllers
+  [Models] as models
+  [LocalForage] as storage
+}
+
+react --> controllers : HTTP/JSON
+expo --> react : Framework
+
+controllers --> models : Validação
+models --> storage : Persistência\n(IndexedDB/WebSQL)
+
+note right of react
+  Tecnologias:
+  - React Native 0.79
+  - Expo SDK 53
+  - Componentes funcionais
+end note
+
+note left of controllers
+  Tecnologias:
+  - ES Modules
+  - Jest para testes
+  - Arquitetura MVC
+end note
+
+note bottom of storage
+  Persistência via:
+  - LocalForage 1.10+
+  - Armazenamento local assíncrono
+  - Compatível com React Native
+end note
+@enduml
