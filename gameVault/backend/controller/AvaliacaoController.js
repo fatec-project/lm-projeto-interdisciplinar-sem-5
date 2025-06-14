@@ -3,7 +3,18 @@ import Avaliacao from '../model/Avaliacao.js';
 
 const COLLECTION = 'avaliacoes';
 
-export const AvaliacaoController = {
+export default class AvaliacaoController {
+  constructor() {
+    this.initializeDatabase();
+  }
+
+  async initializeDatabase() {
+    const avaliacoes = await db.getItem(COLLECTION);
+    if (!avaliacoes) {
+      await db.setItem(COLLECTION, []);
+    }
+  }
+
   async avaliar(jogoId, usuarioId, gostou) {
     try {
       const avaliacao = new Avaliacao(jogoId, usuarioId, gostou);
@@ -25,19 +36,19 @@ export const AvaliacaoController = {
       console.error('Erro ao avaliar:', error);
       throw error;
     }
-  },
+  }
 
   async getAvaliacoesByJogo(jogoId) {
     const avaliacoes = (await db.getItem(COLLECTION)) || [];
     return avaliacoes.filter(a => a.jogoId === Number(jogoId));
-  },
+  }
 
   async getAvaliacao(usuarioId, jogoId) {
     const avaliacoes = (await db.getItem(COLLECTION)) || [];
     return avaliacoes.find(
       a => a.jogoId === Number(jogoId) && a.usuarioId === Number(usuarioId)
     ) || null;
-  },
+  }
 
   async remover(usuarioId, jogoId) {
     const avaliacoes = (await db.getItem(COLLECTION)) || [];
