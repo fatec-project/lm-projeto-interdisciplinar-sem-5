@@ -1,25 +1,18 @@
 import Usuario from '../../model/Usuario';
 
 describe('A classe de entidade Usuario', () => {
-  const usuario = new Usuario;
+  const usuarioCorreto = new Usuario('nome', 'email@email.com', 'senha1234', 1);
+  const usuarioFalho = new Usuario(125, 'email@email.com', 1234);
 
-  it('Deve possuir métodos getter e setter de Id', () => {
-    usuario.setId(1);
-    expect(usuario.getId()).toBe(1);
+  it('Deve construir um objeto à partir dos parâmetros do construtor', () => {
+    expect(usuarioCorreto.id).toBe(1);
+    expect(usuarioCorreto.nome).toBe('nome');
+    expect(usuarioCorreto.email).toBe('email@email.com');
+    expect(usuarioCorreto.senha).toBe('senha1234');
   });
 
-  it('Deve possuir métodos getter e setter de Nome', () => {
-    usuario.setNome('Verso');
-    expect(usuario.getNome()).toBe('Verso');
-  });
-
-  it('Deve possuir métodos getter e setter de Email', () => {
-    usuario.setEmail('maelle@email.com');
-    expect(usuario.getEmail()).toBe('maelle@email.com');
-  });
-
-  it('Deve possuir métodos getter e setter de Senha', () => {
-    usuario.setSenha('abcd1234!');
-    expect(usuario.getSenha()).toBe('abcd1234!');
+  it('Deve validar os valores passados para o seu construtor', () => {
+    expect(usuarioCorreto.isValid()).toBe(true);
+    expect(usuarioFalho.isValid()).toStrictEqual(['Nome inválido: deve ser uma string não vazia', 'Senha inválida: deve ser uma string não vazia']);
   });
 });
