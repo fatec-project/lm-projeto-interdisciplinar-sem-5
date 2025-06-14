@@ -9,6 +9,8 @@ skinparam usecase {
 actor Usuário
 
 rectangle "Sistema GameVault" {
+  (Criar Conta) as UC6
+  (Logar) as UC7
   (Avaliar Jogo) as UC1
   (Gerenciar Biblioteca) as UC2
   (Gerenciar Carrinho) as UC3
@@ -22,6 +24,8 @@ rectangle "Sistema GameVault" {
   UC4 .> (Adicionar Desejo) : extends
   UC4 .> (Remover Desejo) : extends
   
+  Usuário --> UC6
+  Usuário --> UC7
   Usuário --> UC1
   Usuário --> UC2
   Usuário --> UC3
@@ -31,9 +35,20 @@ rectangle "Sistema GameVault" {
 
 note right of Usuário
   Usuário pode:
+  - Criar conta e fazer login
   - Avaliar jogos
   - Gerenciar biblioteca/carrinho
   - Adicionar à lista de desejos
-  - Gerenciar sua conta
+  - Gerenciar dados da conta
+end note
+
+note left of UC6
+  Pré-condição:
+  Usuário não cadastrado
+end note
+
+note left of UC7
+  Pré-condição:
+  Usuário com conta existente
 end note
 @enduml
