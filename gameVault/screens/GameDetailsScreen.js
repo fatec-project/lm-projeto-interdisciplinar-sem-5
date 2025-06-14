@@ -1,0 +1,207 @@
+import React, { useEffect, useState } from 'react';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  SafeAreaView, 
+  ScrollView, 
+  Image, 
+  ImageBackground,
+  Dimensions,
+  TouchableOpacity,
+  ActivityIndicator
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import PurchaseContainer from '../components/GameDetailsScreen/purchasecontainer';
+import ScreenshotCarousel from '../components/GameDetailsScreen/screenshotcarousel';
+import RatingComponent from '../components/GameDetailsScreen/ratingcomponent';
+
+const { width } = Dimensions.get('window');
+
+const GameDetailsScreen = ({ route, navigation }) => {
+  const { game } = route.params;
+  const [gameDetails, setGameDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const approvalPercentage = 85;
+
+  useEffect(() => {
+    const fetchGameDetails = async () => {
+      try {
+        const response = await fetch(`https://igdb-test-production.up.railway.app/game/${game.id}`);
+        const data = await response.json();
+        setGameDetails(data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching game details:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchGameDetails();
+  }, [game.id]);
+
+  if (loading || !gameDetails) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#051923' }}>
+        <ActivityIndicator size="large" color="#2dc653" />
+      </View>
+    );
+  }
+
+  const artworkUrl = gameDetails.artworks?.length > 0 
+    ? `https:${gameDetails.artworks[0].url.replace('t_thumb', 't_1080p')}`
+    : null;
+
+  const coverUrl = gameDetails.cover?.url 
+    ? `https:${gameDetails.cover.url.replace('t_thumb', 't_cover_big')}`
+    : null;
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        {artworkUrl && (
+          <View style={styles.artworkContainer}>
+            <ImageBackground
+              source={{ uri: artworkUrl }}
+              style={styles.artworkBackground}
+              blurRadius={10}
+            >
+              <LinearGradient
+                colors={['rgba(5, 25, 35, 0.9)', 'rgba(5, 25, 35, 0.5)', 'transparent']}
+                style={styles.gradient}
+              />
+            </ImageBackground>
+          </View>
+        )}
+        
+        {coverUrl && (
+          <View style={styles.coverContainer}>
+            <Image
+              source={{ uri: coverUrl }}
+              style={styles.coverImage}
+            />
+          </View>
+        )}
+        
+        <View style={styles.content}>
+          <Text style={styles.title}>{gameDetails.name}</Text>
+
+          <PurchaseContainer
+            originalPrice="R$ 199,90"
+            discount="-30%"
+            finalPrice="R$ 139,90"
+          />
+          
+          {gameDetails.screenshots?.length > 0 && (
+            <View style={styles.infoSection}>
+              <Text style={styles.sectionTitle}>Screenshots</Text>
+              <ScreenshotCarousel screenshots={gameDetails.screenshots} />
+            </View>
+          )}
+          
+          {gameDetails.summary && (
+            <View style={styles.infoSection}>
+              <Text style={styles.sectionTitle}>Sobre o Jogo</Text>
+              <Text style={styles.description}>{gameDetails.summary}</Text>
+            </View>
+          )}
+        </View>
+
+        <RatingComponent approvalPercentage={approvalPercentage} />
+
+      </ScrollView>
+      
+      <TouchableOpacity 
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Ionicons name="arrow-back" size={24} color="#fff" />
+      </TouchableOpacity>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#051923',
+  },
+  scrollContainer: {
+    paddingBottom: 20,
+  },
+  artworkContainer: {
+    height: 250,
+    width: '100%',
+  },
+  artworkBackground: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  gradient: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  },
+  coverContainer: {
+    position: 'absolute',
+    top: 180,
+    left: 20,
+    zIndex: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 6,
+    elevation: 10,
+  },
+  coverImage: {
+    width: 120,
+    height: 160,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
+  },
+  content: {
+    marginTop: 60,
+    padding: 20,
+    paddingTop: 40,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#e0e0e0',
+    marginBottom: 20,
+  },
+  infoSection: {
+    marginBottom: 25,
+  },
+  sectionTitle: {
+    color: '#e0e0e0',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  description: {
+    color: '#e0e0e0',
+    fontSize: 16,
+    lineHeight: 24,
+  },
+  backButton: {
+    position: 'absolute',
+    top: 40,
+    left: 20,
+    zIndex: 10,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 20,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
+
+export default GameDetailsScreen;
