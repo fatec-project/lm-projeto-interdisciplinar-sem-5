@@ -1,54 +1,30 @@
 @startuml casosUso
 left to right direction
-skinparam monochrome true
-skinparam usecase {
-  BackgroundColor #F9F9F9
-  BorderColor #000000
-}
 
 actor Usuário
 
-rectangle "Sistema GameVault" {
-  (Criar Conta) as UC6
-  (Logar) as UC7
-  (Avaliar Jogo) as UC1
-  (Gerenciar Biblioteca) as UC2
-  (Gerenciar Carrinho) as UC3
-  (Gerenciar Lista de Desejos) as UC4
-  (Gerenciar Conta) as UC5
-  
-  UC2 .> (Adicionar Jogo) : extends
-  UC2 .> (Remover Jogo) : extends
-  UC3 .> (Adicionar Item) : extends
-  UC3 .> (Remover Item) : extends
-  UC4 .> (Adicionar Desejo) : extends
-  UC4 .> (Remover Desejo) : extends
-  
-  Usuário --> UC6
-  Usuário --> UC7
-  Usuário --> UC1
-  Usuário --> UC2
-  Usuário --> UC3
-  Usuário --> UC4
-  Usuário --> UC5
+rectangle "Autenticação" {
+  (Criar Conta) 
+  (Logar)
 }
 
-note right of Usuário
-  Usuário pode:
-  - Criar conta e fazer login
-  - Avaliar jogos
-  - Gerenciar biblioteca/carrinho
-  - Adicionar à lista de desejos
-  - Gerenciar dados da conta
-end note
+rectangle "Funcionalidades" {
+  (Avaliar Jogo)
+  (Gerenciar Biblioteca) .> (Adicionar Jogo)
+  (Gerenciar Carrinho) .> (Remover Item)
+  (Gerenciar Lista Desejos)
+}
 
-note left of UC6
-  Pré-condição:
-  Usuário não cadastrado
-end note
+Usuário --> (Criar Conta)
+Usuário --> (Logar)
+Usuário --> (Avaliar Jogo)
+Usuário --> (Gerenciar Biblioteca)
+Usuário --> (Gerenciar Carrinho)
+Usuário --> (Gerenciar Lista Desejos)
 
-note left of UC7
-  Pré-condição:
-  Usuário com conta existente
+note right
+  Fluxo principal:
+  1. Criar conta/logar
+  2. Acessar funcionalidades
 end note
 @enduml
