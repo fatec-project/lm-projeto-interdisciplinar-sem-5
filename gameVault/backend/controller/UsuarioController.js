@@ -3,7 +3,7 @@ import Usuario from '../model/Usuario.js';
 
 const COLLECTION = 'usuarios';
 
-export const UsuarioController = {
+export default class UsuarioController {
   async criar(nome, email, senha) {
     try {
       const usuario = new Usuario(nome, email, senha);
@@ -22,18 +22,18 @@ export const UsuarioController = {
       console.error('Erro ao criar usuário:', error);
       throw error;
     }
-  },
+  }
 
   async listar() {
     const usuarios = (await db.getItem(COLLECTION)) || [];
     return usuarios.map(u => new Usuario(u.nome, u.email, u.senha, u.id).toSafeObject());
-  },
+  }
 
   async buscarPorId(id) {
     const usuarios = (await db.getItem(COLLECTION)) || [];
     const usuario = usuarios.find(u => u.id === Number(id));
     return usuario ? new Usuario(usuario.nome, usuario.email, usuario.senha, usuario.id).toSafeObject() : null;
-  },
+  }
 
   async login(identificador, senha) {
     try {
@@ -52,7 +52,7 @@ export const UsuarioController = {
       console.error('Erro ao fazer login:', error);
       throw error;
     }
-  },
+  }
 
   async atualizar(id, dados) {
     try {
@@ -77,7 +77,7 @@ export const UsuarioController = {
       console.error('Erro ao atualizar usuário:', error);
       throw error;
     }
-  },
+  }
 
   async remover(id) {
     const usuarios = (await db.getItem(COLLECTION)) || [];

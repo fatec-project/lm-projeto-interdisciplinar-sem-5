@@ -1,8 +1,10 @@
 import * as AvaliacaoController from './controller/AvaliacaoController.js';
 import * as BibliotecaController from './controller/BibliotecaController.js';
 import * as CarrinhoController from './controller/CarrinhoController.js';
-import * as UsuarioController from './controller/UsuarioController.js';
+import UsuarioController from './controller/UsuarioController.js';
 import * as ListaDesejosController from './controller/ListaDesejosController.js';
+
+const usuarioController = new UsuarioController;
 
 const GameVaultAPI = {
   avaliacoes: {
@@ -26,12 +28,12 @@ const GameVaultAPI = {
   },
 
   usuarios: {
-    criar: (nome, email, senha) => UsuarioController.criar(nome, email, senha),
-    login: (identificador, senha) => UsuarioController.login(identificador, senha),
-    listar: () => UsuarioController.listar(),
-    buscar: (id) => UsuarioController.buscarPorId(id),
-    atualizar: (id, dados) => UsuarioController.atualizar(id, dados),
-    remover: (id) => UsuarioController.remover(id)
+    criar: (nome, email, senha) => usuarioController.criar(nome, email, senha),
+    login: (identificador, senha) => usuarioController.login(identificador, senha),
+    listar: () => usuarioController.listar(),
+    buscar: (id) => usuarioController.buscarPorId(id),
+    atualizar: (id, dados) => usuarioController.atualizar(id, dados),
+    remover: (id) => usuarioController.remover(id)
   },
 
   listaDesejos: {
