@@ -24,8 +24,7 @@
     "testEnvironment": "node",
     "transform": {},
     "roots": ["./backend"],
-    "testRegex": ".*\\.test\\.js$",
-    "setupFiles": ["./backend/__tests__/jest.setup.js"]
+    "testRegex": ".*\\.test\\.js$"
   },
   "private": true
 }
