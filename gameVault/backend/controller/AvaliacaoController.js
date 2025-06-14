@@ -1,41 +1,50 @@
-import db from '../config/database';
+import db from '../config/database.js';
+import Avaliacao from '../model/Avaliacao.js';
 
 const COLLECTION = 'avaliacoes';
 
 export const AvaliacaoController = {
   async avaliar(jogoId, usuarioId, gostou) {
-    const avaliacoes = (await db.getItem(COLLECTION)) || [];
-    const existente = avaliacoes.find(
-      a => a.jogoId === jogoId && a.usuarioId === usuarioId
-    );
+    try {
+      const avaliacao = new Avaliacao(jogoId, usuarioId, gostou);
+      const avaliacoes = (await db.getItem(COLLECTION)) || [];
+      
+      const index = avaliacoes.findIndex(
+        a => a.jogoId === avaliacao.jogoId && a.usuarioId === avaliacao.usuarioId
+      );
 
-    if (existente) {
-      existente.gostou = gostou;
-    } else {
-      avaliacoes.push({ jogoId, usuarioId, gostou });
+      if (index !== -1) {
+        avaliacoes[index] = avaliacao;
+      } else {
+        avaliacoes.push(avaliacao);
+      }
+
+      await db.setItem(COLLECTION, avaliacoes);
+      return avaliacao;
+    } catch (error) {
+      console.error('Erro ao avaliar:', error);
+      throw error;
     }
-
-    await db.setItem(COLLECTION, avaliacoes);
-    return true;
   },
 
   async getAvaliacoesByJogo(jogoId) {
     const avaliacoes = (await db.getItem(COLLECTION)) || [];
-    return avaliacoes.filter(a => a.jogoId === jogoId);
+    return avaliacoes.filter(a => a.jogoId === Number(jogoId));
   },
 
   async getAvaliacao(usuarioId, jogoId) {
     const avaliacoes = (await db.getItem(COLLECTION)) || [];
     return avaliacoes.find(
-      a => a.jogoId === jogoId && a.usuarioId === usuarioId
+      a => a.jogoId === Number(jogoId) && a.usuarioId === Number(usuarioId)
     ) || null;
   },
 
   async remover(usuarioId, jogoId) {
     const avaliacoes = (await db.getItem(COLLECTION)) || [];
     const atualizado = avaliacoes.filter(
-      a => !(a.usuarioId === usuarioId && a.jogoId === jogoId)
+      a => !(a.usuarioId === Number(usuarioId) && a.jogoId === Number(jogoId))
     );
     await db.setItem(COLLECTION, atualizado);
+    return true;
   }
 };

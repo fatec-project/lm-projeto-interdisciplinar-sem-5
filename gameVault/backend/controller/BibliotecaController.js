@@ -1,32 +1,42 @@
-import db from '../config/database';
+import db from '../config/database.js';
+import Biblioteca from '../model/Biblioteca.js';
 
 const COLLECTION = 'biblioteca';
 
 export const BibliotecaController = {
   async adicionar(usuarioId, jogoId) {
-    const biblioteca = (await db.getItem(COLLECTION)) || [];
-    const existente = biblioteca.find(
-      i => i.usuarioId === usuarioId && i.jogoId === jogoId
-    );
+    try {
+      const bibliotecaItem = new Biblioteca(usuarioId, jogoId);
+      const biblioteca = (await db.getItem(COLLECTION)) || [];
+      
+      const existe = biblioteca.some(
+        item => item.usuarioId === bibliotecaItem.usuarioId && 
+               item.jogoId === bibliotecaItem.jogoId
+      );
 
-    if (!existente) {
-      biblioteca.push({ usuarioId, jogoId, dataAdicao: new Date().toISOString() });
-      await db.setItem(COLLECTION, biblioteca);
+      if (!existe) {
+        biblioteca.push(bibliotecaItem);
+        await db.setItem(COLLECTION, biblioteca);
+      }
+
+      return bibliotecaItem;
+    } catch (error) {
+      console.error('Erro ao adicionar à biblioteca:', error);
+      throw error;
     }
-
-    return true;
   },
 
   async getBibliotecaByUsuario(usuarioId) {
     const biblioteca = (await db.getItem(COLLECTION)) || [];
-    return biblioteca.filter(i => i.usuarioId === usuarioId);
+    return biblioteca.filter(item => item.usuarioId === Number(usuarioId));
   },
 
   async remover(usuarioId, jogoId) {
     const biblioteca = (await db.getItem(COLLECTION)) || [];
     const atualizado = biblioteca.filter(
-      i => !(i.usuarioId === usuarioId && i.jogoId === jogoId)
+      item => !(item.usuarioId === Number(usuarioId) && item.jogoId === Number(jogoId))
     );
     await db.setItem(COLLECTION, atualizado);
+    return true;
   }
 };
