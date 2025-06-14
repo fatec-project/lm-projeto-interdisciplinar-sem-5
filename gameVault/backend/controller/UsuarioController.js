@@ -35,6 +35,25 @@ export const UsuarioController = {
     return usuario ? new Usuario(usuario.nome, usuario.email, usuario.senha, usuario.id).toSafeObject() : null;
   },
 
+  async login(identificador, senha) {
+    try {
+      const usuarios = (await db.getItem(COLLECTION)) || [];
+      const usuario = usuarios.find(u => 
+        (u.email === identificador || u.nome === identificador) && 
+        u.senha === senha
+      );
+      
+      if (!usuario) {
+        throw new Error('Credenciais inválidas');
+      }
+      
+      return new Usuario(usuario.nome, usuario.email, usuario.senha, usuario.id).toSafeObject();
+    } catch (error) {
+      console.error('Erro ao fazer login:', error);
+      throw error;
+    }
+  },
+
   async atualizar(id, dados) {
     try {
       const usuarios = (await db.getItem(COLLECTION)) || [];
