@@ -1,14 +1,14 @@
-export default class Jogo {
-  id;
+export default class Avaliacao {
+  jogoId;
   usuarioId;
   gostou;
   
-  getId() {
-    return this.id;
+  getJogoId() {
+    return this.JogoId;
   }
 
-  setId(id) {
-    this.id = id;
+  setJogoId(jogoId) {
+    this.jogoId = jogoId;
   }
 
   getUsuarioId() {
