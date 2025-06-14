@@ -24,5 +24,20 @@
     "@babel/core": "^7.20.0",
     "jest": "^30.0.0"
   },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {},
+    "moduleFileExtensions": [
+      "js",
+      "json"
+    ],
+    "setupFiles": [
+      "./backend/__tests__/jest.setup.js"
+    ],
+    "roots": [
+      "./backend/__tests__"
+    ],
+    "testRegex": ".*\\.test\\.js$"
+  },
   "private": true
 }
