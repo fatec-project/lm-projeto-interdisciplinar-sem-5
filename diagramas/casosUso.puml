@@ -1,0 +1,39 @@
+@startuml casosUso
+left to right direction
+skinparam monochrome true
+skinparam usecase {
+  BackgroundColor #F9F9F9
+  BorderColor #000000
+}
+
+actor Usuário
+
+rectangle "Sistema GameVault" {
+  (Avaliar Jogo) as UC1
+  (Gerenciar Biblioteca) as UC2
+  (Gerenciar Carrinho) as UC3
+  (Gerenciar Lista de Desejos) as UC4
+  (Gerenciar Conta) as UC5
+  
+  UC2 .> (Adicionar Jogo) : extends
+  UC2 .> (Remover Jogo) : extends
+  UC3 .> (Adicionar Item) : extends
+  UC3 .> (Remover Item) : extends
+  UC4 .> (Adicionar Desejo) : extends
+  UC4 .> (Remover Desejo) : extends
+  
+  Usuário --> UC1
+  Usuário --> UC2
+  Usuário --> UC3
+  Usuário --> UC4
+  Usuário --> UC5
+}
+
+note right of Usuário
+  Usuário pode:
+  - Avaliar jogos
+  - Gerenciar biblioteca/carrinho
+  - Adicionar à lista de desejos
+  - Gerenciar sua conta
+end note
+@enduml
