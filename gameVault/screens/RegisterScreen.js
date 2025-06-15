@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import GameVaultAPI from '../backend/index.js';
 
 const RegisterScreen = ({ navigation }) => {
@@ -7,6 +8,7 @@ const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleCadastro = async () => {
     if (!nome || !email || !senha) {
@@ -24,6 +26,10 @@ const RegisterScreen = ({ navigation }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -46,12 +52,25 @@ const RegisterScreen = ({ navigation }) => {
         keyboardType="email-address"
       />
       
-      <TextInput
-        style={styles.input}
-        placeholder="Senha"
-        value={senha}
-        onChangeText={setSenha}
-      />
+      <View style={styles.passwordContainer}>
+        <TextInput
+          style={styles.passwordInput}
+          placeholder="Senha"
+          value={senha}
+          onChangeText={setSenha}
+          secureTextEntry={!showPassword}
+        />
+        <TouchableOpacity 
+          style={styles.eyeButton}
+          onPress={toggleShowPassword}
+        >
+          <Ionicons 
+            name={showPassword ? 'eye' : 'eye-off'} 
+            size={24} 
+            color="#666" 
+          />
+        </TouchableOpacity>
+      </View>
       
       <TouchableOpacity 
         style={styles.button} 
@@ -96,6 +115,24 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     backgroundColor: '#222',
     color: '#fff',
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderColor: '#333',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 15,
+    backgroundColor: '#222',
+  },
+  passwordInput: {
+    flex: 1,
+    height: 50,
+    paddingHorizontal: 15,
+    color: '#fff',
+  },
+  eyeButton: {
+    padding: 10,
   },
   button: {
     backgroundColor: '#6200ee',
