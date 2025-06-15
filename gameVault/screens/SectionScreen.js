@@ -32,9 +32,7 @@ const SectionScreen = ({ route }) => {
           .map(result => ({
             id: result.value.id,
             name: result.value.name,
-            cover: {
-              url: `https:${result.value.cover.url.replace('t_thumb', 't_cover_big_2x')}`
-            }
+            cover: result.value.cover
           }));
 
         setGames(validGames);

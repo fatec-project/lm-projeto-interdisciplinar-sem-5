@@ -35,50 +35,41 @@ const GameDetailsScreen = ({ route }) => {
   const approvalPercentage = 85;
 
   useEffect(() => {
-    if (!game?.id || !user?.id) return;
-    const checkGameStatus = async () => {      
+    if (!game?.id) return;
+
+    const fetchGameDetails = async () => {
       try {
-        // Verificar se está na biblioteca
-        const biblioteca = await GameVaultAPI.biblioteca.listar(user.id);
+        setLoading(true);
+        const response = await fetch(`https://igdb-test-production.up.railway.app/game/${game.id}`);
+        const data = await response.json();
+
+        setGameDetails(data);
+      } catch (error) {
+        console.error('Error fetching game details:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const checkGameStatus = async () => {
+      if (!user?.id) return;
+      
+      try {
+        // Executa ambas verificações em paralelo
+        const [biblioteca, carrinho] = await Promise.all([
+          GameVaultAPI.biblioteca.listar(user.id),
+          GameVaultAPI.carrinho.listar(user.id)
+        ]);
+
         setIsInLibrary(biblioteca.some(item => item.jogoId === game.id));
-        
-        // Verificar se está no carrinho
-        const carrinho = await GameVaultAPI.carrinho.listar(user.id);
         setIsInCart(carrinho.some(item => item.jogoId === game.id));
       } catch (error) {
         console.error('Erro ao verificar status do jogo:', error);
       }
     };
 
-    const fetchGameDetails = async () => {
-      try {
-        const response = await fetch(`https://igdb-test-production.up.railway.app/game/${game.id}`);
-        const data = await response.json();
-
-        const processedData = {
-          ...data,
-          cover: data.cover ? {
-            url: `https:${data.cover.url.replace('t_thumb', 't_cover_big_2x')}`
-          } : null,
-          artworks: data.artworks ? data.artworks.map(art => ({
-            url: `https:${art.url.replace('t_thumb', 't_1080p')}`
-          })) : [],
-          screenshots: data.screenshots ? data.screenshots.map(sc => ({
-            url: `https:${sc.url.replace('t_thumb', 't_720p')}`
-          })) : [],
-        };
-
-        setGameDetails(processedData);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching game details:', error);
-        setLoading(false);
-      }
-    };
-
-
-    checkGameStatus();
     fetchGameDetails();
+    checkGameStatus();
   }, [game.id, user?.id]);
 
   if (loading || !gameDetails) {
