@@ -99,13 +99,17 @@ const RatingComponent = ({ gameId, canRate }) => {
   // 🔥 Função para determinar o ícone com base em likesPercentage
   const getIcon = () => {
     if (totalRatings === 0) return 'help-circle';
-    return likesPercentage >= 60 ? 'thumbs-up' : 'thumbs-down';
+    if (likesPercentage >= 60) return 'thumbs-up';
+    else if (likesPercentage >= 40) return 'help-circle';
+    else return 'thumbs-down'
   };
 
   // 🔥 Função para determinar a cor do ícone com base em likesPercentage
   const getIconColor = () => {
     if (totalRatings === 0) return '#e0e0e0';
-    return likesPercentage >= 60 ? '#2dc653' : '#ff5a5f';
+    if (likesPercentage >= 60) return '#2dc653';
+    else if (likesPercentage >= 40) return '#e0e0e0';
+    else return '#ff5a5f'
   };
 
   return (
