@@ -6,13 +6,15 @@ import {
   ScrollView, 
   ImageBackground, 
   Dimensions,
-  ActivityIndicator
+  ActivityIndicator,
+  TouchableOpacity
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import GameListCard from '../components/gamelistcard';
 
-const SectionScreen = ({ route }) => {
+const SectionScreen = ({ navigation, route }) => {
   const { title, color, image, gameIds } = route.params;
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -46,10 +48,9 @@ const SectionScreen = ({ route }) => {
     fetchGames();
   }, [gameIds]);
 
-
   return (
-    <SafeAreaView style={styles.container}> 
-      <ScrollView>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.container}>
         <ImageBackground
           source={image}
           style={styles.headerImage}
@@ -72,14 +73,25 @@ const SectionScreen = ({ route }) => {
           )}
         </View>
       </ScrollView>
+      
+      {/* Botão de voltar */}
+      <TouchableOpacity 
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Ionicons name="arrow-back" size={24} color="#fff" />
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: '#051923',
+  },
+  container: {
+    flex: 1,
   },
   headerImage: {
     width: '100%',
@@ -107,6 +119,18 @@ const styles = StyleSheet.create({
   },
   loading: {
     marginVertical: 40,
+  },
+  backButton: {
+    position: 'absolute',
+    top: 40,
+    left: 20,
+    zIndex: 10,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 20,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

@@ -3,7 +3,7 @@ import { View, Image, Dimensions, TouchableOpacity, Animated } from 'react-nativ
 import { useNavigation } from '@react-navigation/native';
 import styles from './styles';
 
-const Carousel = ({ artworks = [], autoPlay = true, interval = 4000 }) => {
+const Carousel = ({ artworks = [], autoPlay = true, interval = 4000, onItemPress }) => {
   const navigation = useNavigation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollX = useRef(new Animated.Value(0)).current;
@@ -39,12 +39,6 @@ const Carousel = ({ artworks = [], autoPlay = true, interval = 4000 }) => {
     setCurrentIndex(index);
   };
 
-  const handleBannerPress = (gameId) => {
-    navigation.navigate('GameDetails', { 
-      game: { id: gameId } 
-    });
-  };
-
   if (!artworks || artworks.length === 0) return null;
 
   return (
@@ -58,12 +52,15 @@ const Carousel = ({ artworks = [], autoPlay = true, interval = 4000 }) => {
         onScroll={onScroll}
         scrollEventThrottle={16}
         onMomentumScrollEnd={onMomentumScrollEnd}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item, index) => {
+          // Usa o id se existir, senão usa o index
+          return item.id ? item.id.toString() : `section-${index}`
+        }}
         renderItem={({ item }) => (
           <TouchableOpacity 
             activeOpacity={0.9} 
             style={{ width: windowWidth }}
-            onPress={() => handleBannerPress(item.id)}
+            onPress={() => onItemPress(item)}
           >
             <Image 
               source={item.source} 
