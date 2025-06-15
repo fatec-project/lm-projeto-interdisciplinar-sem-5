@@ -1,22 +1,21 @@
-import React, { useEffect, useState } from 'react';
+jsx
+import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import GameVaultAPI from '../backend/index.js';
+import { useUser } from '../context/UserContext';
 
 const LibraryScreen = ({ navigation }) => {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState(null);
+  const { user } = useUser();
 
   useEffect(() => {
     const fetchLibrary = async () => {
+      if (!user) return;
+      
       try {
-        // Obter o ID do usuário logado (você pode precisar ajustar isso conforme sua implementação)
-        const usuarios = await GameVaultAPI.usuarios.listar();
-        const usuarioLogado = usuarios[0]; // Simulação - substitua pela lógica real de autenticação
-        setUserId(usuarioLogado.id);
-
-        const biblioteca = await GameVaultAPI.biblioteca.listar(usuarioLogado.id);
+        const biblioteca = await GameVaultAPI.biblioteca.listar(user.id);
         
         // Simulação de busca dos jogos - substitua pela sua lógica real
         const jogosDaBiblioteca = biblioteca.map(item => ({
@@ -34,7 +33,7 @@ const LibraryScreen = ({ navigation }) => {
     };
 
     fetchLibrary();
-  }, []);
+  }, [user]);
 
   const renderGameItem = ({ item }) => (
     <TouchableOpacity 
