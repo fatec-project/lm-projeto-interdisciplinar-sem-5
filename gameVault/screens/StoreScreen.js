@@ -41,20 +41,33 @@ const StoreScreen = () => {
     const fetchGames = async () => {
       try {
         const BACKEND_URL = "https://igdb-test-production.up.railway.app/game/";
-        const promises = trendIds.map(id => 
+        const promises = trendIds.map(id =>
           fetch(`${BACKEND_URL}${id}`).then(res => res.json())
         );
-        const results = await Promise.all(promises);
-        setGames(results.filter(game => game && game.cover));
-        setLoading(false);
+
+        const results = await Promise.allSettled(promises);
+
+        const validGames = results
+          .filter(result => result.status === 'fulfilled' && result.value && result.value.cover)
+          .map(result => ({
+            id: result.value.id,
+            name: result.value.name,
+            cover: {
+              url: `https:${result.value.cover.url.replace('t_thumb', 't_cover_big_2x')}`
+            }
+          }));
+
+        setGames(validGames);
       } catch (error) {
         console.error('Error fetching games:', error);
+      } finally {
         setLoading(false);
       }
     };
 
     fetchGames();
   }, []);
+
 
   const navigateToSection = (section) => {
     navigation.navigate('SectionScreen', { 

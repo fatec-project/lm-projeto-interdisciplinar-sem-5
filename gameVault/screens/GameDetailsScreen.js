@@ -54,13 +54,28 @@ const GameDetailsScreen = ({ route }) => {
       try {
         const response = await fetch(`https://igdb-test-production.up.railway.app/game/${game.id}`);
         const data = await response.json();
-        setGameDetails(data);
+
+        const processedData = {
+          ...data,
+          cover: data.cover ? {
+            url: `https:${data.cover.url.replace('t_thumb', 't_cover_big_2x')}`
+          } : null,
+          artworks: data.artworks ? data.artworks.map(art => ({
+            url: `https:${art.url.replace('t_thumb', 't_1080p')}`
+          })) : [],
+          screenshots: data.screenshots ? data.screenshots.map(sc => ({
+            url: `https:${sc.url.replace('t_thumb', 't_720p')}`
+          })) : [],
+        };
+
+        setGameDetails(processedData);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching game details:', error);
         setLoading(false);
       }
     };
+
 
     checkGameStatus();
     fetchGameDetails();
