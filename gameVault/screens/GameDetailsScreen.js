@@ -29,10 +29,27 @@ const GameDetailsScreen = ({ route }) => {
   const { game } = route.params;
   const [gameDetails, setGameDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isInCart, setIsInCart] = useState(false);
+  const [isInLibrary, setIsInLibrary] = useState(false);
 
   const approvalPercentage = 85;
 
   useEffect(() => {
+    if (!game?.id || !user?.id) return;
+    const checkGameStatus = async () => {      
+      try {
+        // Verificar se está na biblioteca
+        const biblioteca = await GameVaultAPI.biblioteca.listar(user.id);
+        setIsInLibrary(biblioteca.some(item => item.jogoId === game.id));
+        
+        // Verificar se está no carrinho
+        const carrinho = await GameVaultAPI.carrinho.listar(user.id);
+        setIsInCart(carrinho.some(item => item.jogoId === game.id));
+      } catch (error) {
+        console.error('Erro ao verificar status do jogo:', error);
+      }
+    };
+
     const fetchGameDetails = async () => {
       try {
         const response = await fetch(`https://igdb-test-production.up.railway.app/game/${game.id}`);
@@ -45,8 +62,9 @@ const GameDetailsScreen = ({ route }) => {
       }
     };
 
+    checkGameStatus();
     fetchGameDetails();
-  }, [game.id]);
+  }, [game.id, user?.id]);
 
   if (loading || !gameDetails) {
     return (
@@ -70,12 +88,23 @@ const GameDetailsScreen = ({ route }) => {
       return;
     }
 
+    if (isInLibrary) {
+      Alert.alert('Atenção', 'Você já possui este jogo na sua biblioteca');
+      return;
+    }
+
+    if (isInCart) {
+      Alert.alert('Atenção', 'Este jogo já está no seu carrinho');
+      return;
+    }
+
     try {
-      await GameVaultAPI.carrinho.adicionar(user.id, game.id, 1);
+      await GameVaultAPI.carrinho.adicionar(user.id, game.id);
+      setIsInCart(true);
       Alert.alert('Sucesso', 'Jogo adicionado ao carrinho com sucesso!');
     } catch (error) {
       console.error('Error adding to cart:', error);
-      Alert.alert('Erro', 'Não foi possível adicionar o jogo ao carrinho');
+      Alert.alert('Erro', error.message || 'Não foi possível adicionar o jogo ao carrinho');
     }
   };
 
@@ -114,6 +143,7 @@ const GameDetailsScreen = ({ route }) => {
             discount="-30%"
             finalPrice="R$ 139,90"
             onAddToCart={handleAddToCart}
+            disabled={isInCart || isInLibrary}
           />
           
           {gameDetails.screenshots?.length > 0 && (

@@ -20,8 +20,7 @@ const NavBar = () => {
       
       try {
         const carrinho = await GameVaultAPI.carrinho.listar(user.id);
-        const count = carrinho.reduce((total, item) => total + item.quantidade, 0);
-        setCartCount(count);
+        setCartCount(carrinho.length);
       } catch (error) {
         console.error('Erro ao carregar carrinho:', error);
       }
