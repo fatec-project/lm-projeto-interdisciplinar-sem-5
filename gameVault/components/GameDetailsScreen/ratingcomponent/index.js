@@ -1,6 +1,5 @@
-// components/GameDetailsScreen/ratingcomponent/index.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from './styles';
 import { useUser } from '../../../context/UserContext';
@@ -9,13 +8,14 @@ import GameVaultAPI from '../../../backend/index.js';
 const RatingComponent = ({ gameId }) => {
   const { user } = useUser();
   const [approvalPercentage, setApprovalPercentage] = useState(0);
+  const [likes, setLikes] = useState(0);
+  const [dislikes, setDislikes] = useState(0);
   const [userRating, setUserRating] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchRating = async () => {
       if (!user?.id || !gameId) return;
-      
       try {
         const rating = await GameVaultAPI.avaliacoes.buscar(user.id, gameId);
         setUserRating(rating?.gostou ?? null);
@@ -30,17 +30,24 @@ const RatingComponent = ({ gameId }) => {
   useEffect(() => {
     const calculateApproval = async () => {
       if (!gameId) return;
-      
       try {
         const ratings = await GameVaultAPI.avaliacoes.listarPorJogo(gameId);
         if (ratings.length === 0) {
           setApprovalPercentage(0);
+          setLikes(0);
+          setDislikes(0);
           return;
         }
 
-        const likes = ratings.filter(r => r.gostou).length;
-        const newPercentage = Math.round((likes / ratings.length) * 100);
+        const likesCount = ratings.filter(r => r.gostou === true).length;
+        const dislikesCount = ratings.filter(r => r.gostou === false).length;
+        const total = likesCount + dislikesCount;
+
+        const newPercentage = Math.round((likesCount / total) * 100);
+
         setApprovalPercentage(newPercentage);
+        setLikes(likesCount);
+        setDislikes(dislikesCount);
       } catch (error) {
         console.error('Error calculating approval:', error);
       }
@@ -58,11 +65,9 @@ const RatingComponent = ({ gameId }) => {
     setLoading(true);
     try {
       if (userRating === gostou) {
-        // Remove a avaliação se clicar no mesmo botão novamente
         await GameVaultAPI.avaliacoes.remover(user.id, gameId);
         setUserRating(null);
       } else {
-        // Adiciona/atualiza a avaliação
         await GameVaultAPI.avaliacoes.criar(gameId, user.id, gostou);
         setUserRating(gostou);
       }
@@ -74,67 +79,78 @@ const RatingComponent = ({ gameId }) => {
     }
   };
 
-  let ratingText = '';
-  let ratingColor = '';
-  let ratingIcon = '';
-
-  if (approvalPercentage >= 80) {
-    ratingText = 'Muito bom';
-    ratingColor = '#2dc653'; 
-    ratingIcon = 'thumbs-up';
-  } else if (approvalPercentage >= 60) {
-    ratingText = 'Bom';
-    ratingColor = '#7dd181'; 
-    ratingIcon = 'thumbs-up';
-  } else if (approvalPercentage >= 40) {
-    ratingText = 'Neutro';
-    ratingColor = '#ffcc00'; 
-    //ratingIcon = 'thumbs-up-down';
-  } else if (approvalPercentage >= 20) {
-    ratingText = 'Ruim';
-    ratingColor = '#ff9966'; 
-    ratingIcon = 'thumbs-down';
-  } else if (approvalPercentage === 0) {
-    ratingText = 'Nenhuma avaliação ainda';
-    ratingColor = '#ff9966';
-    //ratingIcon = ''
-  } else {
-    ratingText = 'Muito ruim';
-    ratingColor = '#ff5a5f'; 
-    ratingIcon = 'thumbs-down';
-  }
+  const total = likes + dislikes;
 
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>Avaliação dos Jogadores</Text>
-      
+
       <View style={styles.ratingContainer}>
-        <Ionicons name={ratingIcon} size={40} color={ratingColor} style={styles.icon} />
-        
+        <Ionicons
+          name={
+            approvalPercentage >= 60
+              ? 'thumbs-up'
+              : approvalPercentage > 0
+              ? 'thumbs-down'
+              : 'help-circle'
+          }
+          size={40}
+          color={
+            approvalPercentage >= 60
+              ? '#2dc653'
+              : approvalPercentage > 0
+              ? '#ff5a5f'
+              : '#e0e0e0'
+          }
+          style={styles.icon}
+        />
         <View style={styles.textContainer}>
-          <Text style={[styles.ratingText, { color: ratingColor }]}>{ratingText}</Text>
-          <Text style={styles.percentageText}>{approvalPercentage}% de aprovação</Text>
+          <Text style={styles.ratingText}>
+            {total === 0
+              ? 'Nenhuma avaliação ainda'
+              : `${approvalPercentage}% de aprovação`}
+          </Text>
+          <Text style={styles.percentageText}>
+            {total} {total === 1 ? 'avaliação' : 'avaliações'}
+          </Text>
         </View>
       </View>
-      
+
+      {/* Barra de Aprovação */}
       <View style={styles.progressBarContainer}>
-        <View 
+        <View
           style={[
-            styles.progressBar, 
-            { 
-              width: `${approvalPercentage}%`,
-              backgroundColor: ratingColor
-            }
+            styles.progressBar,
+            {
+              width: `${total > 0 ? (likes / total) * 100 : 0}%`,
+              backgroundColor: '#2dc653',
+            },
+          ]}
+        />
+        <View
+          style={[
+            styles.progressBar,
+            {
+              width: `${total > 0 ? (dislikes / total) * 100 : 0}%`,
+              backgroundColor: '#ff5a5f',
+            },
           ]}
         />
       </View>
 
+      {/* Legenda */}
+      <View style={styles.legendContainer}>
+        <Text style={{ color: '#2dc653' }}>👍 {likes}</Text>
+        <Text style={{ color: '#ff5a5f' }}>👎 {dislikes}</Text>
+      </View>
+
+      {/* Botões */}
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[
-            styles.rateButton, 
+            styles.rateButton,
             styles.likeButton,
-            userRating === true && styles.activeButton
+            userRating === true && styles.activeButton,
           ]}
           onPress={() => handleRate(true)}
           disabled={loading}
@@ -142,12 +158,12 @@ const RatingComponent = ({ gameId }) => {
           <Ionicons name="thumbs-up" size={20} color="#fff" />
           <Text style={styles.buttonText}>Gostei</Text>
         </TouchableOpacity>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={[
-            styles.rateButton, 
+            styles.rateButton,
             styles.dislikeButton,
-            userRating === false && styles.activeButton
+            userRating === false && styles.activeButton,
           ]}
           onPress={() => handleRate(false)}
           disabled={loading}

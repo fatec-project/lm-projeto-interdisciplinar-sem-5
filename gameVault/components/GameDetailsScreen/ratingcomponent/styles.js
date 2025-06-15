@@ -1,4 +1,3 @@
-// components/GameDetailsScreen/ratingcomponent/styles.js
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -27,6 +26,7 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#e0e0e0',
     marginBottom: 3,
   },
   percentageText: {
@@ -38,11 +38,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#2a3a4a',
     borderRadius: 5,
     overflow: 'hidden',
-    marginBottom: 20,
+    flexDirection: 'row',
+    marginBottom: 8,
   },
   progressBar: {
     height: '100%',
-    borderRadius: 5,
+  },
+  legendContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+    paddingHorizontal: 4,
   },
   buttonsContainer: {
     flexDirection: 'row',
