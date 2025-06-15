@@ -7,9 +7,11 @@ import GameVaultAPI from '../../../backend/index.js';
 
 const RatingComponent = ({ gameId }) => {
   const { user } = useUser();
-  const [approvalPercentage, setApprovalPercentage] = useState(0);
+  const [totalRatings, setTotalRatings] = useState(0);
   const [likes, setLikes] = useState(0);
   const [dislikes, setDislikes] = useState(0);
+  const [likesPercentage, setLikesPercentage] = useState(0);
+  const [dislikesPercentage, setDislikesPercentage] = useState(0);
   const [userRating, setUserRating] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -33,9 +35,11 @@ const RatingComponent = ({ gameId }) => {
       try {
         const ratings = await GameVaultAPI.avaliacoes.listarPorJogo(gameId);
         if (ratings.length === 0) {
-          setApprovalPercentage(0);
+          setTotalRatings(0);
           setLikes(0);
           setDislikes(0);
+          setLikesPercentage(0);
+          setDislikesPercentage(0);
           return;
         }
 
@@ -43,11 +47,14 @@ const RatingComponent = ({ gameId }) => {
         const dislikesCount = ratings.filter(r => r.gostou === false).length;
         const total = likesCount + dislikesCount;
 
-        const newPercentage = Math.round((likesCount / total) * 100);
+        const likesPct = ((likesCount / total) * 100);
+        const dislikesPct = ((dislikesCount / total) * 100);
 
-        setApprovalPercentage(newPercentage);
+        setTotalRatings(total);
         setLikes(likesCount);
         setDislikes(dislikesCount);
+        setLikesPercentage(likesPct);
+        setDislikesPercentage(dislikesPct);
       } catch (error) {
         console.error('Error calculating approval:', error);
       }
@@ -79,7 +86,27 @@ const RatingComponent = ({ gameId }) => {
     }
   };
 
-  const total = likes + dislikes;
+  // 🔥 Função para determinar o texto da avaliação com base em likesPercentage
+  const getRatingText = () => {
+    if (totalRatings === 0) return 'Nenhuma avaliação ainda';
+    if (likesPercentage >= 80) return 'Muito bom';
+    if (likesPercentage >= 60) return 'Bom';
+    if (likesPercentage >= 40) return 'Neutro';
+    if (likesPercentage >= 20) return 'Ruim';
+    return 'Muito ruim';
+  };
+
+  // 🔥 Função para determinar o ícone com base em likesPercentage
+  const getIcon = () => {
+    if (totalRatings === 0) return 'help-circle';
+    return likesPercentage >= 60 ? 'thumbs-up' : 'thumbs-down';
+  };
+
+  // 🔥 Função para determinar a cor do ícone com base em likesPercentage
+  const getIconColor = () => {
+    if (totalRatings === 0) return '#e0e0e0';
+    return likesPercentage >= 60 ? '#2dc653' : '#ff5a5f';
+  };
 
   return (
     <View style={styles.container}>
@@ -87,31 +114,15 @@ const RatingComponent = ({ gameId }) => {
 
       <View style={styles.ratingContainer}>
         <Ionicons
-          name={
-            approvalPercentage >= 60
-              ? 'thumbs-up'
-              : approvalPercentage > 0
-              ? 'thumbs-down'
-              : 'help-circle'
-          }
+          name={getIcon()}
           size={40}
-          color={
-            approvalPercentage >= 60
-              ? '#2dc653'
-              : approvalPercentage > 0
-              ? '#ff5a5f'
-              : '#e0e0e0'
-          }
+          color={getIconColor()}
           style={styles.icon}
         />
         <View style={styles.textContainer}>
-          <Text style={styles.ratingText}>
-            {total === 0
-              ? 'Nenhuma avaliação ainda'
-              : `${approvalPercentage}% de aprovação`}
-          </Text>
+          <Text style={styles.ratingText}>{getRatingText()}</Text>
           <Text style={styles.percentageText}>
-            {total} {total === 1 ? 'avaliação' : 'avaliações'}
+            {totalRatings} {totalRatings === 1 ? 'avaliação' : 'avaliações'}
           </Text>
         </View>
       </View>
@@ -122,7 +133,7 @@ const RatingComponent = ({ gameId }) => {
           style={[
             styles.progressBar,
             {
-              width: `${total > 0 ? (likes / total) * 100 : 0}%`,
+              width: `${likesPercentage}%`,
               backgroundColor: '#2dc653',
             },
           ]}
@@ -131,7 +142,7 @@ const RatingComponent = ({ gameId }) => {
           style={[
             styles.progressBar,
             {
-              width: `${total > 0 ? (dislikes / total) * 100 : 0}%`,
+              width: `${dislikesPercentage}%`,
               backgroundColor: '#ff5a5f',
             },
           ]}
