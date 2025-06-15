@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { MainTabs } from './MainTabs';
-import { AuthStack } from './AuthStack';
 import GameDetailsScreen from '../screens/GameDetailsScreen';
+import AuthScreen from '../screens/AuthScreen';
 
 import { useUser } from '../context/UserContext';
 
@@ -18,7 +18,7 @@ export const RootStackNavigator = () => {
           <Stack.Screen name="GameDetails" component={GameDetailsScreen} />
         </>
       ) : (
-        <Stack.Screen name="Auth" component={AuthStack} />
+        <Stack.Screen name="Auth" component={AuthScreen} />
       )}
     </Stack.Navigator>
   );

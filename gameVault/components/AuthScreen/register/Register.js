@@ -1,31 +1,33 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import GameVaultAPI from '../../../backend/index.js';
-import { useUser } from '../../../context/UserContext';
-import styles from '../styles';
+import { useUser } from '../../../context/UserContext.js';
+import styles from '../styles.js';
 
-const Login = ({ onSwitchAuth }) => {
-  const navigation = useNavigation();
-  const [identificador, setIdentificador] = useState('');
+const Register = ({ onSwitchAuth }) => {
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useUser();
 
-  const handleLogin = async () => {
-    if (!identificador || !senha) {
+  const handleCadastro = async () => {
+    if (!nome || !email || !senha) {
       Alert.alert('Erro', 'Por favor, preencha todos os campos');
       return;
     }
 
     setLoading(true);
     try {
-      const usuario = await GameVaultAPI.usuarios.login({ identificador: identificador, senha: senha });
+      const usuario = await GameVaultAPI.usuarios.criar({ nome: nome, email: email, senha: senha });
+      Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
+      
+      // Faz login automaticamente após o cadastro
       login(usuario);
     } catch (error) {
-      Alert.alert('Erro', error.message || 'Falha no login');
+      Alert.alert('Erro', error.message || 'Falha no cadastro');
     } finally {
       setLoading(false);
     }
@@ -35,18 +37,27 @@ const Login = ({ onSwitchAuth }) => {
     setShowPassword(!showPassword);
   };
 
-    return (
+return (
     <View style={styles.container}>
       <Text style={styles.logoText}>GAME VAULT</Text>
-      <Text style={styles.subtitle}>Entre na sua conta</Text>
+      <Text style={styles.subtitle}>Crie sua conta</Text>
       
       <TextInput
         style={styles.input}
-        placeholder="Email ou nome de usuário"
+        placeholder="Nome"
         placeholderTextColor="#7a8fa6"
-        value={identificador}
-        onChangeText={setIdentificador}
+        value={nome}
+        onChangeText={setNome}
+      />
+      
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        placeholderTextColor="#7a8fa6"
+        value={email}
+        onChangeText={setEmail}
         autoCapitalize="none"
+        keyboardType="email-address"
       />
       
       <View style={styles.passwordContainer}>
@@ -72,11 +83,11 @@ const Login = ({ onSwitchAuth }) => {
       
       <TouchableOpacity 
         style={styles.button} 
-        onPress={handleLogin}
+        onPress={handleCadastro}
         disabled={loading}
       >
         <Text style={styles.buttonText}>
-          {loading ? 'CARREGANDO...' : 'ENTRAR'}
+          {loading ? 'CARREGANDO...' : 'CADASTRAR'}
         </Text>
       </TouchableOpacity>
       
@@ -84,10 +95,10 @@ const Login = ({ onSwitchAuth }) => {
         style={styles.link} 
         onPress={onSwitchAuth}
       >
-        <Text style={styles.linkText}>Não tem uma conta? <Text style={styles.linkHighlight}>Cadastre-se</Text></Text>
+        <Text style={styles.linkText}>Já tem uma conta? <Text style={styles.linkHighlight}>Faça login</Text></Text>
       </TouchableOpacity>
     </View>
   );
 };
 
-export default Login;
+export default Register;
