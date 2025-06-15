@@ -9,6 +9,7 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import GameListCard from '../components/gamelistcard';
 
 const SectionScreen = ({ route }) => {
@@ -36,29 +37,31 @@ const SectionScreen = ({ route }) => {
   }, [gameIds]);
 
   return (
-    <ScrollView style={styles.container}>
-      <ImageBackground
-        source={image}
-        style={styles.headerImage}
-        blurRadius={2}
-      >
-        <LinearGradient
-          colors={['rgba(0,0,0,0.7)', 'rgba(0,0,0,0.5)', 'transparent']}
-          style={styles.gradient}
-        />
-        <Text style={styles.title}>{title}</Text>
-      </ImageBackground>
+    <SafeAreaView>
+      <ScrollView style={styles.container}>
+        <ImageBackground
+          source={image}
+          style={styles.headerImage}
+          blurRadius={2}
+        >
+          <LinearGradient
+            colors={['rgba(0,0,0,0.7)', 'rgba(0,0,0,0.5)', 'transparent']}
+            style={styles.gradient}
+          />
+          <Text style={styles.title}>{title}</Text>
+        </ImageBackground>
 
-      <View style={styles.content}>
-        {loading ? (
-          <ActivityIndicator size="large" color={color} style={styles.loading} />
-        ) : (
-          games.map(game => (
-            <GameListCard key={game.id} game={game} />
-          ))
-        )}
-      </View>
-    </ScrollView>
+        <View style={styles.content}>
+          {loading ? (
+            <ActivityIndicator size="large" color={color} style={styles.loading} />
+          ) : (
+            games.map(game => (
+              <GameListCard key={game.id} game={game} />
+            ))
+          )}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

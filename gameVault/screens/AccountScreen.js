@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import GameVaultAPI from '../backend/index.js';
 
 const AccountScreen = ({ navigation }) => {
@@ -9,16 +10,18 @@ const AccountScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Minha Conta</Text>
-      
-      <TouchableOpacity 
-        style={styles.button}
-        onPress={handleLogout}
-      >
-        <Text style={styles.buttonText}>Sair</Text>
-      </TouchableOpacity>
-    </View>
+    <SafeAreaView>
+      <View style={styles.container}>
+        <Text style={styles.title}>Minha Conta</Text>
+        
+        <TouchableOpacity 
+          style={styles.button}
+          onPress={handleLogout}
+          >
+          <Text style={styles.buttonText}>Sair</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 };
 

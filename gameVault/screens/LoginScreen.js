@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Importando ícone
+import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import GameVaultAPI from '../backend/index.js';
 
 const LoginScreen = ({ navigation }) => {
@@ -31,54 +32,56 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>GameVault</Text>
+    <SafeAreaView>
+      <View style={styles.container}>
+        <Text style={styles.title}>GameVault</Text>
       
-      <TextInput
-        style={styles.input}
-        placeholder="Email ou nome de usuário"
-        value={identificador}
-        onChangeText={setIdentificador}
-        autoCapitalize="none"
-      />
-      
-      <View style={styles.passwordContainer}>
         <TextInput
-          style={styles.passwordInput}
-          placeholder="Senha"
-          value={senha}
-          onChangeText={setSenha}
-          secureTextEntry={!showPassword}
-        />
-        <TouchableOpacity 
-          style={styles.eyeButton}
-          onPress={toggleShowPassword}
-        >
-          <Ionicons 
-            name={showPassword ? 'eye' : 'eye-off'} 
-            size={24} 
-            color="#666" 
+          style={styles.input}
+          placeholder="Email ou nome de usuário"
+          value={identificador}
+          onChangeText={setIdentificador}
+          autoCapitalize="none"
           />
+        
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={styles.passwordInput}
+            placeholder="Senha"
+            value={senha}
+            onChangeText={setSenha}
+            secureTextEntry={!showPassword}
+            />
+          <TouchableOpacity 
+            style={styles.eyeButton}
+            onPress={toggleShowPassword}
+            >
+            <Ionicons 
+              name={showPassword ? 'eye' : 'eye-off'} 
+              size={24} 
+              color="#666" 
+              />
+          </TouchableOpacity>
+        </View>
+        
+        <TouchableOpacity 
+          style={styles.button} 
+          onPress={handleLogin}
+          disabled={loading}
+          >
+          <Text style={styles.buttonText}>
+            {loading ? 'Carregando...' : 'Entrar'}
+          </Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={styles.link} 
+          onPress={() => navigation.navigate('Cadastro')}
+          >
+          <Text style={styles.linkText}>Não tem uma conta? Cadastre-se</Text>
         </TouchableOpacity>
       </View>
-      
-      <TouchableOpacity 
-        style={styles.button} 
-        onPress={handleLogin}
-        disabled={loading}
-      >
-        <Text style={styles.buttonText}>
-          {loading ? 'Carregando...' : 'Entrar'}
-        </Text>
-      </TouchableOpacity>
-      
-      <TouchableOpacity 
-        style={styles.link} 
-        onPress={() => navigation.navigate('Cadastro')}
-      >
-        <Text style={styles.linkText}>Não tem uma conta? Cadastre-se</Text>
-      </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
 

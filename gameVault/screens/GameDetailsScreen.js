@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import PurchaseContainer from '../components/GameDetailsScreen/purchasecontainer';
 import ScreenshotCarousel from '../components/GameDetailsScreen/screenshotcarousel';
 import RatingComponent from '../components/GameDetailsScreen/ratingcomponent';

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import GameVaultAPI from '../backend/index.js';
 
 const LibraryScreen = ({ navigation }) => {
@@ -57,29 +58,31 @@ const LibraryScreen = ({ navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Minha Biblioteca</Text>
-      
-      {games.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Sua biblioteca está vazia</Text>
-          <TouchableOpacity 
-            style={styles.browseButton}
-            onPress={() => navigation.navigate('Store')}
-          >
-            <Text style={styles.browseButtonText}>Explorar Loja</Text>
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <FlatList
+    <SafeAreaView>
+      <View style={styles.container}>
+        <Text style={styles.title}>Minha Biblioteca</Text>
+        
+        {games.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>Sua biblioteca está vazia</Text>
+            <TouchableOpacity 
+              style={styles.browseButton}
+              onPress={() => navigation.navigate('Store')}
+              >
+              <Text style={styles.browseButtonText}>Explorar Loja</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <FlatList
           data={games}
           renderItem={renderGameItem}
           keyExtractor={item => item.id.toString()}
           numColumns={2}
           contentContainerStyle={styles.listContent}
-        />
-      )}
-    </View>
+          />
+        )}
+      </View>
+    </SafeAreaView>
   );
 };
 
