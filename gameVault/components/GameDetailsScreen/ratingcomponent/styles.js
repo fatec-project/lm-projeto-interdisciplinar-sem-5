@@ -1,3 +1,4 @@
+// components/GameDetailsScreen/ratingcomponent/styles.js
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -37,10 +38,39 @@ const styles = StyleSheet.create({
     backgroundColor: '#2a3a4a',
     borderRadius: 5,
     overflow: 'hidden',
+    marginBottom: 20,
   },
   progressBar: {
     height: '100%',
     borderRadius: 5,
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  rateButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    width: '48%',
+  },
+  likeButton: {
+    backgroundColor: '#2a3a4a',
+  },
+  dislikeButton: {
+    backgroundColor: '#2a3a4a',
+  },
+  activeButton: {
+    opacity: 0.7,
+  },
+  buttonText: {
+    color: '#fff',
+    marginLeft: 8,
+    fontWeight: 'bold',
   },
 });
 

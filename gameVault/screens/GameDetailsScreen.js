@@ -32,8 +32,6 @@ const GameDetailsScreen = ({ route }) => {
   const [isInCart, setIsInCart] = useState(false);
   const [isInLibrary, setIsInLibrary] = useState(false);
 
-  const approvalPercentage = 85;
-
   useEffect(() => {
     if (!game?.id) return;
 
@@ -114,6 +112,8 @@ const GameDetailsScreen = ({ route }) => {
     }
   };
 
+  const canRateGame = isInLibrary && user?.id;
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -167,7 +167,10 @@ const GameDetailsScreen = ({ route }) => {
           )}
         </View>
 
-        <RatingComponent approvalPercentage={approvalPercentage} />
+        <RatingComponent 
+          gameId={game.id} 
+          canRate={canRateGame}
+        />
 
       </ScrollView>
       
