@@ -8,25 +8,48 @@ import {
   ImageBackground,
   Dimensions,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
+  Alert
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import PurchaseContainer from '../components/GameDetailsScreen/purchasecontainer';
 import ScreenshotCarousel from '../components/GameDetailsScreen/screenshotcarousel';
 import RatingComponent from '../components/GameDetailsScreen/ratingcomponent';
+import GameVaultAPI from '../backend/index.js';
+import { useUser } from '../context/UserContext';
 
 const { width } = Dimensions.get('window');
 
-const GameDetailsScreen = ({ route, navigation }) => {
+const GameDetailsScreen = ({ route }) => {
+  const navigation = useNavigation();
+  const { user } = useUser();
   const { game } = route.params;
   const [gameDetails, setGameDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isInCart, setIsInCart] = useState(false);
+  const [isInLibrary, setIsInLibrary] = useState(false);
 
   const approvalPercentage = 85;
 
   useEffect(() => {
+    if (!game?.id || !user?.id) return;
+    const checkGameStatus = async () => {      
+      try {
+        // Verificar se está na biblioteca
+        const biblioteca = await GameVaultAPI.biblioteca.listar(user.id);
+        setIsInLibrary(biblioteca.some(item => item.jogoId === game.id));
+        
+        // Verificar se está no carrinho
+        const carrinho = await GameVaultAPI.carrinho.listar(user.id);
+        setIsInCart(carrinho.some(item => item.jogoId === game.id));
+      } catch (error) {
+        console.error('Erro ao verificar status do jogo:', error);
+      }
+    };
+
     const fetchGameDetails = async () => {
       try {
         const response = await fetch(`https://igdb-test-production.up.railway.app/game/${game.id}`);
@@ -39,8 +62,9 @@ const GameDetailsScreen = ({ route, navigation }) => {
       }
     };
 
+    checkGameStatus();
     fetchGameDetails();
-  }, [game.id]);
+  }, [game.id, user?.id]);
 
   if (loading || !gameDetails) {
     return (
@@ -57,6 +81,32 @@ const GameDetailsScreen = ({ route, navigation }) => {
   const coverUrl = gameDetails.cover?.url 
     ? `https:${gameDetails.cover.url.replace('t_thumb', 't_cover_big')}`
     : null;
+
+  const handleAddToCart = async () => {
+    if (!user) {
+      Alert.alert('Atenção', 'Você precisa estar logado para adicionar itens ao carrinho');
+      return;
+    }
+
+    if (isInLibrary) {
+      Alert.alert('Atenção', 'Você já possui este jogo na sua biblioteca');
+      return;
+    }
+
+    if (isInCart) {
+      Alert.alert('Atenção', 'Este jogo já está no seu carrinho');
+      return;
+    }
+
+    try {
+      await GameVaultAPI.carrinho.adicionar(user.id, game.id);
+      setIsInCart(true);
+      Alert.alert('Sucesso', 'Jogo adicionado ao carrinho com sucesso!');
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      Alert.alert('Erro', error.message || 'Não foi possível adicionar o jogo ao carrinho');
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -92,6 +142,8 @@ const GameDetailsScreen = ({ route, navigation }) => {
             originalPrice="R$ 199,90"
             discount="-30%"
             finalPrice="R$ 139,90"
+            onAddToCart={handleAddToCart}
+            disabled={isInCart || isInLibrary}
           />
           
           {gameDetails.screenshots?.length > 0 && (

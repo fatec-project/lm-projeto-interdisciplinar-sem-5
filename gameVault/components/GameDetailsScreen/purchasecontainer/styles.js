@@ -38,9 +38,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 4,
   },
-  buttonsContainer: {
-    width: '100%',
-  },
   button: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -52,16 +49,15 @@ const styles = StyleSheet.create({
   addToCartButton: {
     backgroundColor: '#2dc653',
   },
-  wishlistButton: {
-    backgroundColor: 'transparent',
-    borderWidth: 2,
-    borderColor: '#2dc653',
-  },
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
     marginLeft: 10,
+  },
+  disabledButton: {
+    backgroundColor: '#666',
+    opacity: 0.7,
   },
 });
 

@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import GameVaultAPI from '../backend/index.js';
 import { useUser } from '../context/UserContext';
 
-const LibraryScreen = ({ navigation }) => {
+const LibraryScreen = () => {
+  const navigation = useNavigation();
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
@@ -64,7 +66,7 @@ const LibraryScreen = ({ navigation }) => {
           <Text style={styles.emptyText}>Sua biblioteca está vazia</Text>
           <TouchableOpacity 
             style={styles.browseButton}
-            onPress={() => navigation.navigate('Store')}
+            onPress={() => navigation.navigate('Loja')}
             >
             <Text style={styles.browseButtonText}>Explorar Loja</Text>
           </TouchableOpacity>

@@ -26,7 +26,7 @@ const GameVaultAPI = {
   },
 
   carrinho: {
-    adicionar: (usuarioId, jogoId, quantidade) => carrinhoController.addItem(usuarioId, jogoId, quantidade),
+    adicionar: (usuarioId, jogoId) => carrinhoController.addItem(usuarioId, jogoId),
     listar: (usuarioId) => carrinhoController.getCarrinhoByUsuario(usuarioId),
     remover: (usuarioId, jogoId) => carrinhoController.removeItem(usuarioId, jogoId),
     limpar: (usuarioId) => carrinhoController.clearCarrinho(usuarioId)
