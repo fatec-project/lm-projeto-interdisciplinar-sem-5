@@ -10,11 +10,11 @@ import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import LibraryScreen from './screens/LibraryScreen';
 import AccountScreen from './screens/AccountScreen';
+import { UserProvider } from './context/UserContext';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// Componente de navegação por abas
 const MainTabs = () => {
   return (
     <Tab.Navigator
@@ -62,26 +62,28 @@ const MainTabs = () => {
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Login"
-        screenOptions={{
-          headerShown: false,
-          cardStyle: { backgroundColor: '#051923' },
-        }}
-      >
-        {/* Telas de autenticação */}
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Cadastro" component={RegisterScreen} />
-        
-        {/* Telas principais (com abas) */}
-        <Stack.Screen name="Main" component={MainTabs} />
-        
-        {/* Telas de navegação secundária */}
-        <Stack.Screen name="GameDetails" component={GameDetailsScreen} />
-        <Stack.Screen name="SectionScreen" component={SectionScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <UserProvider>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Login"
+          screenOptions={{
+            headerShown: false,
+            cardStyle: { backgroundColor: '#051923' },
+          }}
+        >
+          {/* Telas de autenticação */}
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Cadastro" component={RegisterScreen} />
+          
+          {/* Telas principais (com abas) */}
+          <Stack.Screen name="Main" component={MainTabs} />
+          
+          {/* Telas de navegação secundária */}
+          <Stack.Screen name="GameDetails" component={GameDetailsScreen} />
+          <Stack.Screen name="SectionScreen" component={SectionScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </UserProvider>
   );
 };
 
