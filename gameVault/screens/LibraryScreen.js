@@ -83,7 +83,7 @@ const LibraryScreen = () => {
       {games.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>Sua biblioteca está vazia</Text>
-          <TouchableOpacity style={styles.browseButton} onPress={() => navigation.navigate('StoreMain')}>
+          <TouchableOpacity style={styles.browseButton} onPress={() => navigation.navigate('Loja')}>
             <Text style={styles.browseButtonText}>Explorar Loja</Text>
           </TouchableOpacity>
         </View>
