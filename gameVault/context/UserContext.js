@@ -1,16 +1,27 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  const login = (userData) => {
+  useEffect(() => {
+    const loadUser = async () => {
+      const storedUser = await AsyncStorage.getItem('user');
+      if (storedUser) setUser(JSON.parse(storedUser));
+    };
+    loadUser();
+  }, []);
+
+  const login = async (userData) => {
     setUser(userData);
+    await AsyncStorage.setItem('user', JSON.stringify(userData));
   };
 
-  const logout = () => {
+  const logout = async () => {
     setUser(null);
+    await AsyncStorage.removeItem('user');
   };
 
   return (
@@ -20,6 +31,4 @@ export const UserProvider = ({ children }) => {
   );
 };
 
-export const useUser = () => {
-  return useContext(UserContext);
-};
+export const useUser = () => useContext(UserContext);

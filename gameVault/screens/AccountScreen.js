@@ -12,23 +12,21 @@ const AccountScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView>
-      <View style={styles.container}>
-        <Text style={styles.title}>Minha Conta</Text>
-        {user && (
-          <View style={styles.userInfo}>
-            <Text style={styles.userText}>Nome: {user.nome}</Text>
-            <Text style={styles.userText}>Email: {user.email}</Text>
-          </View>
-        )}
-        
-        <TouchableOpacity 
-          style={styles.button}
-          onPress={handleLogout}
-          >
-          <Text style={styles.buttonText}>Sair</Text>
-        </TouchableOpacity>
-      </View>
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.title}>Minha Conta</Text>
+      {user && (
+        <View style={styles.userInfo}>
+          <Text style={styles.userText}>Nome: {user.nome}</Text>
+          <Text style={styles.userText}>Email: {user.email}</Text>
+        </View>
+      )}
+      
+      <TouchableOpacity 
+        style={styles.button}
+        onPress={handleLogout}
+        >
+        <Text style={styles.buttonText}>Sair</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };

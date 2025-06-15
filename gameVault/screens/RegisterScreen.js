@@ -39,64 +39,61 @@ const RegisterScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView>
-
-      <View style={styles.container}>
-        <Text style={styles.title}>Cadastro</Text>
-        
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.title}>Cadastro</Text>
+      
+      <TextInput
+        style={styles.input}
+        placeholder="Nome"
+        value={nome}
+        onChangeText={setNome}
+        />
+      
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        autoCapitalize="none"
+        keyboardType="email-address"
+        />
+      
+      <View style={styles.passwordContainer}>
         <TextInput
-          style={styles.input}
-          placeholder="Nome"
-          value={nome}
-          onChangeText={setNome}
+          style={styles.passwordInput}
+          placeholder="Senha"
+          value={senha}
+          onChangeText={setSenha}
+          secureTextEntry={!showPassword}
           />
-        
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-          />
-        
-        <View style={styles.passwordContainer}>
-          <TextInput
-            style={styles.passwordInput}
-            placeholder="Senha"
-            value={senha}
-            onChangeText={setSenha}
-            secureTextEntry={!showPassword}
+        <TouchableOpacity 
+          style={styles.eyeButton}
+          onPress={toggleShowPassword}
+          >
+          <Ionicons 
+            name={showPassword ? 'eye' : 'eye-off'} 
+            size={24} 
+            color="#666" 
             />
-          <TouchableOpacity 
-            style={styles.eyeButton}
-            onPress={toggleShowPassword}
-            >
-            <Ionicons 
-              name={showPassword ? 'eye' : 'eye-off'} 
-              size={24} 
-              color="#666" 
-              />
-          </TouchableOpacity>
-        </View>
-        
-        <TouchableOpacity 
-          style={styles.button} 
-          onPress={handleCadastro}
-          disabled={loading}
-          >
-          <Text style={styles.buttonText}>
-            {loading ? 'Carregando...' : 'Cadastrar'}
-          </Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={styles.link} 
-          onPress={() => navigation.goBack()}
-          >
-          <Text style={styles.linkText}>Já tem uma conta? Faça login</Text>
         </TouchableOpacity>
       </View>
+      
+      <TouchableOpacity 
+        style={styles.button} 
+        onPress={handleCadastro}
+        disabled={loading}
+        >
+        <Text style={styles.buttonText}>
+          {loading ? 'Carregando...' : 'Cadastrar'}
+        </Text>
+      </TouchableOpacity>
+      
+      <TouchableOpacity 
+        style={styles.link} 
+        onPress={() => navigation.goBack()}
+        >
+        <Text style={styles.linkText}>Já tem uma conta? Faça login</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };

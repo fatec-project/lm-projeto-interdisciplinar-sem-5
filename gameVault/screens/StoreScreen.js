@@ -63,40 +63,38 @@ const StoreScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView>
-      <View style={styles.container}>
-        <NavBar />
-        <ScrollView 
-          style={styles.content}
-          contentContainerStyle={styles.scrollContent}
-        >
-          <Carousel artworks={bannerGames} />
+    <SafeAreaView style={styles.container}>
+      <NavBar />
+      <ScrollView 
+        style={styles.content}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <Carousel artworks={bannerGames} />
 
-          <SectionContainer 
-            title={sections.newReleases.title} 
-            containerColor={sections.newReleases.color}
-            onPress={() => navigateToSection(sections.newReleases)}>
-              <GameCarousel gameIds={sections.newReleases.ids} />
-          </SectionContainer>
+        <SectionContainer 
+          title={sections.newReleases.title} 
+          containerColor={sections.newReleases.color}
+          onPress={() => navigateToSection(sections.newReleases)}>
+            <GameCarousel gameIds={sections.newReleases.ids} />
+        </SectionContainer>
 
-          <SectionContainer 
-            title={sections.rpgs.title} 
-            containerColor={sections.rpgs.color}
-            onPress={() => navigateToSection(sections.rpgs)}>
-              <GameCarousel gameIds={sections.rpgs.ids} />
-          </SectionContainer>
+        <SectionContainer 
+          title={sections.rpgs.title} 
+          containerColor={sections.rpgs.color}
+          onPress={() => navigateToSection(sections.rpgs)}>
+            <GameCarousel gameIds={sections.rpgs.ids} />
+        </SectionContainer>
 
-          <Text style={styles.sectionTitle}>Recomendados</Text>
+        <Text style={styles.sectionTitle}>Recomendados</Text>
 
-          {loading ? (
-            <Text style={styles.loadingText}>Carregando...</Text>
-          ) : (
-            games.map(game => (
-              <GameListCard key={game.id} game={game} />
-            ))
-          )}
-        </ScrollView>
-      </View>
+        {loading ? (
+          <Text style={styles.loadingText}>Carregando...</Text>
+        ) : (
+          games.map(game => (
+            <GameListCard key={game.id} game={game} />
+          ))
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 };

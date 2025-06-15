@@ -1,9 +1,8 @@
-jsx
 import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import GameVaultAPI from '../backend/index.js';
-//import { useUser } from '../context/UserContext';
+import { useUser } from '../context/UserContext';
 
 const LibraryScreen = ({ navigation }) => {
   const [games, setGames] = useState([]);
@@ -57,30 +56,28 @@ const LibraryScreen = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView>
-      <View style={styles.container}>
-        <Text style={styles.title}>Minha Biblioteca</Text>
-        
-        {games.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>Sua biblioteca está vazia</Text>
-            <TouchableOpacity 
-              style={styles.browseButton}
-              onPress={() => navigation.navigate('Store')}
-              >
-              <Text style={styles.browseButtonText}>Explorar Loja</Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <FlatList
-          data={games}
-          renderItem={renderGameItem}
-          keyExtractor={item => item.id.toString()}
-          numColumns={2}
-          contentContainerStyle={styles.listContent}
-          />
-        )}
-      </View>
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.title}>Minha Biblioteca</Text>
+      
+      {games.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Sua biblioteca está vazia</Text>
+          <TouchableOpacity 
+            style={styles.browseButton}
+            onPress={() => navigation.navigate('Store')}
+            >
+            <Text style={styles.browseButtonText}>Explorar Loja</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <FlatList
+        data={games}
+        renderItem={renderGameItem}
+        keyExtractor={item => item.id.toString()}
+        numColumns={2}
+        contentContainerStyle={styles.listContent}
+        />
+      )}
     </SafeAreaView>
   );
 };
