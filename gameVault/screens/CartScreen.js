@@ -16,20 +16,40 @@ const CartScreen = () => {
   useEffect(() => {
     const fetchCart = async () => {
       if (!user) return;
-      
+
       try {
+        const BACKEND_URL = "https://igdb-test-production.up.railway.app/game/";
         const carrinho = await GameVaultAPI.carrinho.listar(user.id);
-        // Simulação de busca dos jogos - substitua pela sua lógica real
-        const jogosDoCarrinho = carrinho.map(item => ({
-          id: item.jogoId,
-          name: `Jogo ${item.jogoId}`,
-          cover: { url: 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1r76.jpg' },
-          price: 129.90,
-        }));
-        
-        setCartItems(jogosDoCarrinho);
+
+        if (!carrinho.length) {
+          setCartItems([]);
+          return;
+        }
+
+        const promises = carrinho.map(item =>
+          fetch(`${BACKEND_URL}${item.jogoId}`).then(res => res.json())
+        );
+
+        const results = await Promise.allSettled(promises);
+
+        const jogosComCapa = results
+          .filter(result => result.status === 'fulfilled' && result.value && result.value.cover)
+          .map(result => {
+            const game = result.value;
+            return {
+              id: game.id,
+              name: game.name,
+              cover: {
+                url: `https:${game.cover.url.replace('t_thumb', 't_cover_big_2x')}`
+              },
+              price: game.price || 129.90
+            };
+          });
+
+        setCartItems(jogosComCapa);
       } catch (error) {
         console.error('Erro ao carregar carrinho:', error);
+        Alert.alert('Erro', 'Não foi possível carregar o carrinho');
       } finally {
         setLoading(false);
       }
@@ -53,23 +73,16 @@ const CartScreen = () => {
 
   const handleCheckout = async () => {
     try {
-      // Adicionar todos os jogos do carrinho à biblioteca
       for (const item of cartItems) {
         await GameVaultAPI.biblioteca.adicionar(user.id, item.id);
       }
-      
-      // Limpar o carrinho
+
       await GameVaultAPI.carrinho.limpar(user.id);
-      
+
       Alert.alert(
         'Compra Finalizada',
         `Pagamento via ${paymentMethod === 'pix' ? 'PIX' : 'Cartão de Crédito'} realizado com sucesso!`,
-        [
-          { 
-            text: 'OK', 
-            onPress: () => navigation.goBack()
-          }
-        ]
+        [{ text: 'OK', onPress: () => navigation.goBack() }]
       );
     } catch (error) {
       console.error('Erro ao finalizar compra:', error);

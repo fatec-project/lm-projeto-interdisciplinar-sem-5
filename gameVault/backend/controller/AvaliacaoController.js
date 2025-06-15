@@ -1,7 +1,9 @@
 import db from '../config/database.js';
 import Avaliacao from '../model/Avaliacao.js';
+import BibliotecaController from './BibliotecaController.js';
 
 const COLLECTION = 'avaliacoes';
+const bibliotecaController = new BibliotecaController();
 
 export default class AvaliacaoController {
   constructor() {
@@ -17,6 +19,14 @@ export default class AvaliacaoController {
 
   async avaliar(jogoId, usuarioId, gostou) {
     try {
+      // Verifica se o usuário possui o jogo na biblioteca
+      const biblioteca = await bibliotecaController.getBibliotecaByUsuario(usuarioId);
+      const possuiJogo = biblioteca.some(item => item.jogoId === Number(jogoId));
+      
+      if (!possuiJogo) {
+        throw new Error('Você precisa possuir o jogo na sua biblioteca para avaliá-lo');
+      }
+
       const avaliacao = new Avaliacao(jogoId, usuarioId, gostou);
       const avaliacoes = (await db.getItem(COLLECTION)) || [];
       

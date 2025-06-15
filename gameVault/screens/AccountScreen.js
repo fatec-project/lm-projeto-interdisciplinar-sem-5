@@ -10,7 +10,6 @@ const AccountScreen = () => {
 
   const handleLogout = async () => {
     logout();
-    navigation.replace('Login');
   };
 
   return (

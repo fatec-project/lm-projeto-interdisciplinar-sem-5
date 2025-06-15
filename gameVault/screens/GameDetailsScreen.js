@@ -32,39 +32,43 @@ const GameDetailsScreen = ({ route }) => {
   const [isInCart, setIsInCart] = useState(false);
   const [isInLibrary, setIsInLibrary] = useState(false);
 
-  const approvalPercentage = 85;
-
   useEffect(() => {
-    if (!game?.id || !user?.id) return;
-    const checkGameStatus = async () => {      
+    if (!game?.id) return;
+
+    const fetchGameDetails = async () => {
       try {
-        // Verificar se está na biblioteca
-        const biblioteca = await GameVaultAPI.biblioteca.listar(user.id);
+        setLoading(true);
+        const response = await fetch(`https://igdb-test-production.up.railway.app/game/${game.id}`);
+        const data = await response.json();
+
+        setGameDetails(data);
+      } catch (error) {
+        console.error('Error fetching game details:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const checkGameStatus = async () => {
+      if (!user.id) return;
+      
+      try {
+        // Executa ambas verificações em paralelo
+        const [biblioteca, carrinho] = await Promise.all([
+          GameVaultAPI.biblioteca.listar(user.id),
+          GameVaultAPI.carrinho.listar(user.id)
+        ]);
+
         setIsInLibrary(biblioteca.some(item => item.jogoId === game.id));
-        
-        // Verificar se está no carrinho
-        const carrinho = await GameVaultAPI.carrinho.listar(user.id);
         setIsInCart(carrinho.some(item => item.jogoId === game.id));
       } catch (error) {
         console.error('Erro ao verificar status do jogo:', error);
       }
     };
 
-    const fetchGameDetails = async () => {
-      try {
-        const response = await fetch(`https://igdb-test-production.up.railway.app/game/${game.id}`);
-        const data = await response.json();
-        setGameDetails(data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching game details:', error);
-        setLoading(false);
-      }
-    };
-
-    checkGameStatus();
     fetchGameDetails();
-  }, [game.id, user?.id]);
+    checkGameStatus();
+  }, [game.id, user.id]);
 
   if (loading || !gameDetails) {
     return (
@@ -107,6 +111,8 @@ const GameDetailsScreen = ({ route }) => {
       Alert.alert('Erro', error.message || 'Não foi possível adicionar o jogo ao carrinho');
     }
   };
+
+  const canRateGame = isInLibrary && user.id;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -161,7 +167,10 @@ const GameDetailsScreen = ({ route }) => {
           )}
         </View>
 
-        <RatingComponent approvalPercentage={approvalPercentage} />
+        <RatingComponent 
+          gameId={game.id} 
+          canRate={canRateGame}
+        />
 
       </ScrollView>
       

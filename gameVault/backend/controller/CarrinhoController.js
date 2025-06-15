@@ -18,7 +18,7 @@ export default class CarrinhoController {
   async addItem(usuarioId, jogoId) {
     try {
       // Verificar se o jogo já está na biblioteca
-      const biblioteca = (await db.getItem('biblioteca')) || []; 
+      const biblioteca = (await db.getItem('biblioteca')).filter((item) => item.usuarioId === Number(usuarioId)) || []; 
       if (biblioteca.some(item => item.jogoId === Number(jogoId))) {
         throw new Error('Você já possui este jogo na sua biblioteca');
       }

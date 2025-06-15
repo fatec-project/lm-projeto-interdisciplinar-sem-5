@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#e0e0e0',
     marginBottom: 3,
   },
   percentageText: {
@@ -37,10 +38,45 @@ const styles = StyleSheet.create({
     backgroundColor: '#2a3a4a',
     borderRadius: 5,
     overflow: 'hidden',
+    flexDirection: 'row',
+    marginBottom: 8,
   },
   progressBar: {
     height: '100%',
+  },
+  legendContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+    paddingHorizontal: 4,
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  rateButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 5,
+    width: '48%',
+  },
+  likeButton: {
+    backgroundColor: '#2a3a4a',
+  },
+  dislikeButton: {
+    backgroundColor: '#2a3a4a',
+  },
+  activeButton: {
+    opacity: 0.7,
+  },
+  buttonText: {
+    color: '#fff',
+    marginLeft: 8,
+    fontWeight: 'bold',
   },
 });
 

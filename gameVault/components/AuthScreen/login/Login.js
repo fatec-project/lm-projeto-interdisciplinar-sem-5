@@ -2,10 +2,10 @@ import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import GameVaultAPI from '../../../backend/index.js';
-import { useUser } from '../../../context/UserContext';
-import styles from '../styles';
+import { useUser } from '../../../context/UserContext.js';
+import styles from '../styles.js';
 
-const Login = ({ navigation, onSwitchAuth }) => {
+const Login = ({ onSwitchAuth }) => {
   const [identificador, setIdentificador] = useState('');
   const [senha, setSenha] = useState('');
   const [loading, setLoading] = useState(false);

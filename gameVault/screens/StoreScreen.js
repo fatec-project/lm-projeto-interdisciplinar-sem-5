@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, ScrollView, StyleSheet, StatusBar, Platform, Text, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NavBar from '../components/navbar';
 import Carousel from '../components/StoreScreen/carouselbanner';
@@ -7,7 +8,8 @@ import SectionContainer from '../components/StoreScreen/sectioncontainer';
 import GameCarousel from '../components/StoreScreen/gamecarousel';
 import GameListCard from '../components/gamelistcard';
 
-const StoreScreen = ({ navigation }) => {
+const StoreScreen = () => {
+  const navigation = useNavigation();
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -46,20 +48,31 @@ const StoreScreen = ({ navigation }) => {
     const fetchGames = async () => {
       try {
         const BACKEND_URL = "https://igdb-test-production.up.railway.app/game/";
-        const promises = trendIds.map(id => 
+        const promises = trendIds.map(id =>
           fetch(`${BACKEND_URL}${id}`).then(res => res.json())
         );
-        const results = await Promise.all(promises);
-        setGames(results.filter(game => game && game.cover));
-        setLoading(false);
+
+        const results = await Promise.allSettled(promises);
+
+        const validGames = results
+          .filter(result => result.status === 'fulfilled' && result.value && result.value.cover)
+          .map(result => ({
+            id: result.value.id,
+            name: result.value.name,
+            cover: result.value.cover
+          }));
+
+        setGames(validGames);
       } catch (error) {
         console.error('Error fetching games:', error);
+      } finally {
         setLoading(false);
       }
     };
 
     fetchGames();
   }, []);
+
 
   const navigateToSection = (section) => {
     navigation.navigate('SectionScreen', { 

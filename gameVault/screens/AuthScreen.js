@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { View, SafeAreaView, StyleSheet, ImageBackground } from 'react-native';
-import Login from '../components/AuthScreen/login';
-import Register from '../components/AuthScreen/register';
+import Login from '../components/AuthScreen/login/Login';
+import Register from '../components/AuthScreen/register/Register';
 
-const AuthScreen = ({ navigation }) => {
+const AuthScreen = () => {
   const [isLogin, setIsLogin] = useState(true);
 
   const toggleAuthMode = () => {
@@ -20,12 +20,10 @@ const AuthScreen = ({ navigation }) => {
         <View style={styles.formWrapper}>
           {isLogin ? (
             <Login 
-              navigation={navigation} 
               onSwitchAuth={toggleAuthMode} 
             />
           ) : (
             <Register 
-              navigation={navigation} 
               onSwitchAuth={toggleAuthMode} 
             />
           )}
