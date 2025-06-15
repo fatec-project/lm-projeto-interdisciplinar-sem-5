@@ -28,6 +28,11 @@ const styles = StyleSheet.create({
   iconButton: {
     padding: 5,
   },
+  userName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#e0e0e0',
+  }
 });
 
 export default styles;
