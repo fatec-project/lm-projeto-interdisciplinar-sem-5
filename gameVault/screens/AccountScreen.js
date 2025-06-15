@@ -1,27 +1,33 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import GameVaultAPI from '../backend/index.js';
+import { useUser } from '../context/UserContext';
 
 const AccountScreen = ({ navigation }) => {
+  const { user, logout } = useUser();
+
   const handleLogout = async () => {
-    // Implemente a lógica de logout aqui
+    logout();
     navigation.replace('Login');
   };
 
   return (
-    <SafeAreaView>
-      <View style={styles.container}>
-        <Text style={styles.title}>Minha Conta</Text>
-        
-        <TouchableOpacity 
-          style={styles.button}
-          onPress={handleLogout}
-          >
-          <Text style={styles.buttonText}>Sair</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <Text style={styles.title}>Minha Conta</Text>
+      {user && (
+        <View style={styles.userInfo}>
+          <Text style={styles.userText}>Nome: {user.nome}</Text>
+          <Text style={styles.userText}>Email: {user.email}</Text>
+        </View>
+      )}
+      
+      <TouchableOpacity 
+        style={styles.button}
+        onPress={handleLogout}
+      >
+        <Text style={styles.buttonText}>Sair</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -36,6 +42,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
     marginBottom: 20,
+  },
+  userInfo: {
+    marginBottom: 20,
+  },
+  userText: {
+    color: '#fff',
+    fontSize: 16,
+    marginBottom: 8,
   },
   button: {
     backgroundColor: '#6200ee',
