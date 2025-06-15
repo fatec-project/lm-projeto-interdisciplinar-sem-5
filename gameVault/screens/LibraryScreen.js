@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import GameVaultAPI from '../backend/index.js';
 import { useUser } from '../context/UserContext';
@@ -11,30 +11,41 @@ const LibraryScreen = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
 
-  useEffect(() => {
-    const fetchLibrary = async () => {
-      if (!user) return;
-      
-      try {
-        const biblioteca = await GameVaultAPI.biblioteca.listar(user.id);
-        
-        // Simulação de busca dos jogos - substitua pela sua lógica real
-        const jogosDaBiblioteca = biblioteca.map(item => ({
-          id: item.jogoId,
-          name: `Jogo ${item.jogoId}`,
-          cover: { url: 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1r76.jpg' }
-        }));
-        
-        setGames(jogosDaBiblioteca);
-      } catch (error) {
-        console.error('Erro ao carregar biblioteca:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchLibrary = async () => {
+    if (!user) return;
 
-    fetchLibrary();
-  }, [user, games]);
+    try {
+      setLoading(true);
+      const biblioteca = await GameVaultAPI.biblioteca.listar(user.id);
+      const BACKEND_URL = "https://igdb-test-production.up.railway.app/game/";
+
+      const promises = biblioteca.map(item =>
+        fetch(`${BACKEND_URL}${item.jogoId}`).then(res => res.json())
+      );
+
+      const jogos = await Promise.all(promises);
+      const jogosValidos = jogos.filter(game => game && game.cover);
+
+      const jogosDaBiblioteca = jogosValidos.map(game => ({
+        id: game.id,
+        name: game.name,
+        cover: { url: `https:${game.cover.url}` }
+      }));
+
+      setGames(jogosDaBiblioteca);
+    } catch (error) {
+      console.error('Erro ao carregar biblioteca:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ Atualiza sempre que a tela ganha foco
+  useFocusEffect(
+    useCallback(() => {
+      fetchLibrary();
+    }, [user])
+  );
 
   const renderGameItem = ({ item }) => (
     <TouchableOpacity 
@@ -66,8 +77,8 @@ const LibraryScreen = () => {
           <Text style={styles.emptyText}>Sua biblioteca está vazia</Text>
           <TouchableOpacity 
             style={styles.browseButton}
-            onPress={() => navigation.navigate('Loja')}
-            >
+            onPress={() => navigation.navigate('StoreMain')}
+          >
             <Text style={styles.browseButtonText}>Explorar Loja</Text>
           </TouchableOpacity>
         </View>

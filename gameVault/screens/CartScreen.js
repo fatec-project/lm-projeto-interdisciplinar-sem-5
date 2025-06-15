@@ -19,14 +19,22 @@ const CartScreen = () => {
       
       try {
         const carrinho = await GameVaultAPI.carrinho.listar(user.id);
-        // Simulação de busca dos jogos - substitua pela sua lógica real
-        const jogosDoCarrinho = carrinho.map(item => ({
-          id: item.jogoId,
-          name: `Jogo ${item.jogoId}`,
-          cover: { url: 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1r76.jpg' },
-          price: 129.90,
+        const BACKEND_URL = "https://igdb-test-production.up.railway.app/game/";
+
+        const promises = carrinho.map(item =>
+          fetch(`${BACKEND_URL}${item.jogoId}`).then(res => res.json())
+        );
+
+        const jogos = await Promise.all(promises);
+        const jogosValidos = jogos.filter(game => game && game.cover);
+
+        const jogosDoCarrinho = jogosValidos.map(game => ({
+          id: game.id,
+          name: game.name,
+          cover: { url: `https:${game.cover.url}` },
+          price: game.price || 129.90 // Se não houver preço na API, usa um padrão
         }));
-        
+
         setCartItems(jogosDoCarrinho);
       } catch (error) {
         console.error('Erro ao carregar carrinho:', error);
