@@ -50,7 +50,7 @@ const GameDetailsScreen = ({ route }) => {
     };
 
     const checkGameStatus = async () => {
-      if (!user?.id) return;
+      if (!user.id) return;
       
       try {
         // Executa ambas verificações em paralelo
@@ -68,7 +68,7 @@ const GameDetailsScreen = ({ route }) => {
 
     fetchGameDetails();
     checkGameStatus();
-  }, [game.id, user?.id]);
+  }, [game.id, user.id]);
 
   if (loading || !gameDetails) {
     return (
@@ -112,7 +112,7 @@ const GameDetailsScreen = ({ route }) => {
     }
   };
 
-  const canRateGame = isInLibrary && user?.id;
+  const canRateGame = isInLibrary && user.id;
 
   return (
     <SafeAreaView style={styles.container}>
