@@ -48,8 +48,8 @@ const SectionScreen = ({ route }) => {
 
 
   return (
-    <SafeAreaView>
-      <ScrollView style={styles.container}>
+    <SafeAreaView style={styles.container}> 
+      <ScrollView>
         <ImageBackground
           source={image}
           style={styles.headerImage}
