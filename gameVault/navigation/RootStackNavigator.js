@@ -1,0 +1,25 @@
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { MainTabs } from './MainTabs';
+import { AuthStack } from './AuthStack';
+import GameDetailsScreen from '../screens/GameDetailsScreen';
+
+import { useUser } from '../context/UserContext';
+
+const Stack = createNativeStackNavigator();
+
+export const RootStackNavigator = () => {
+  const { user } = useUser();
+
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {user ? (
+        <>
+          <Stack.Screen name="MainTabs" component={MainTabs} />
+          <Stack.Screen name="GameDetails" component={GameDetailsScreen} />
+        </>
+      ) : (
+        <Stack.Screen name="Auth" component={AuthStack} />
+      )}
+    </Stack.Navigator>
+  );
+};

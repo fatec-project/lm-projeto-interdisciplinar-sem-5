@@ -39,7 +39,7 @@ const LibraryScreen = () => {
   const renderGameItem = ({ item }) => (
     <TouchableOpacity 
       style={styles.gameItem}
-      onPress={() => navigation.navigate('GameDetails', { game: item })}
+      onPress={() => navigation.navigate('GameDetails', { game: { ...item }})}
     >
       <Image
         source={{ uri: item.cover.url }}
@@ -73,11 +73,11 @@ const LibraryScreen = () => {
         </View>
       ) : (
         <FlatList
-        data={games}
-        renderItem={renderGameItem}
-        keyExtractor={item => item.id.toString()}
-        numColumns={2}
-        contentContainerStyle={styles.listContent}
+          data={games}
+          renderItem={renderGameItem}
+          keyExtractor={item => item.id.toString()}
+          numColumns={2}
+          contentContainerStyle={styles.listContent}
         />
       )}
     </SafeAreaView>
