@@ -15,21 +15,22 @@ export default class CarrinhoController {
     }
   }
 
-  async addItem(usuarioId, jogoId, quantidade = 1) {
+  async addItem(usuarioId, jogoId) {
     try {
-      const item = new Carrinho(usuarioId, jogoId, quantidade);
-      const carrinho = (await db.getItem(COLLECTION)) || [];
-      
-      const existente = carrinho.find(
-        i => i.usuarioId === Number(item.usuarioId) && i.jogoId === Number(item.jogoId)
-      );
-
-      if (existente) {
-        existente.quantidade += Number(quantidade);
-      } else {
-        carrinho.push(item);
+      // Verificar se o jogo já está na biblioteca
+      const biblioteca = await GameVaultAPI.biblioteca.listar(usuarioId);
+      if (biblioteca.some(item => item.jogoId === Number(jogoId))) {
+        throw new Error('Você já possui este jogo na sua biblioteca');
       }
 
+      // Verificar se o jogo já está no carrinho
+      const carrinho = (await db.getItem(COLLECTION)) || [];
+      if (carrinho.some(item => item.usuarioId === Number(usuarioId) && item.jogoId === Number(jogoId))) {
+        throw new Error('Este jogo já está no seu carrinho');
+      }
+
+      const item = new Carrinho(usuarioId, jogoId);
+      carrinho.push(item);
       await db.setItem(COLLECTION, carrinho);
       return item;
     } catch (error) {
