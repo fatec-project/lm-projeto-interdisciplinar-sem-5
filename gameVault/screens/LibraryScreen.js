@@ -34,7 +34,7 @@ const LibraryScreen = () => {
     };
 
     fetchLibrary();
-  }, [user]);
+  }, [user, games]);
 
   const renderGameItem = ({ item }) => (
     <TouchableOpacity 
