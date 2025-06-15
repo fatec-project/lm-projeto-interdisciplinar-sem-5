@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { View, SafeAreaView, StyleSheet, ImageBackground } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import Login from '../components/AuthScreen/login';
 import Register from '../components/AuthScreen/register';
 
-const AuthScreen = ({ navigation }) => {
+const AuthScreen = () => {
+  const navigation = useNavigation();
   const [isLogin, setIsLogin] = useState(true);
 
   const toggleAuthMode = () => {

@@ -1,11 +1,13 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import GameVaultAPI from '../../../backend/index.js';
 import { useUser } from '../../../context/UserContext';
 import styles from '../styles';
 
-const Login = ({ navigation, onSwitchAuth }) => {
+const Login = ({ onSwitchAuth }) => {
+  const navigation = useNavigation();
   const [identificador, setIdentificador] = useState('');
   const [senha, setSenha] = useState('');
   const [loading, setLoading] = useState(false);
