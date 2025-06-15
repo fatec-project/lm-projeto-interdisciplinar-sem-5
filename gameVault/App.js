@@ -1,4 +1,5 @@
 import React from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -63,26 +64,28 @@ const MainTabs = () => {
 const App = () => {
   return (
     <UserProvider>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="Login"
-          screenOptions={{
-            headerShown: false,
-            cardStyle: { backgroundColor: '#051923' },
-          }}
-        >
-          {/* Telas de autenticação */}
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Cadastro" component={RegisterScreen} />
-          
-          {/* Telas principais (com abas) */}
-          <Stack.Screen name="Main" component={MainTabs} />
-          
-          {/* Telas de navegação secundária */}
-          <Stack.Screen name="GameDetails" component={GameDetailsScreen} />
-          <Stack.Screen name="SectionScreen" component={SectionScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <SafeAreaProvider>
+        <NavigationContainer>
+          <Stack.Navigator
+            initialRouteName="Login"
+            screenOptions={{
+              headerShown: false,
+              cardStyle: { backgroundColor: '#051923' },
+            }}
+            >
+            {/* Telas de autenticação */}
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Cadastro" component={RegisterScreen} />
+            
+            {/* Telas principais (com abas) */}
+            <Stack.Screen name="Main" component={MainTabs} />
+            
+            {/* Telas de navegação secundária */}
+            <Stack.Screen name="GameDetails" component={GameDetailsScreen} />
+            <Stack.Screen name="SectionScreen" component={SectionScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaProvider>
     </UserProvider>
   );
 };
