@@ -55,7 +55,7 @@ const GameCarousel = ({ gameIds = [] }) => {
         decelerationRate="fast"
         renderItem={({ item }) => (
           <TouchableOpacity 
-            onPress={() => navigation.navigate('GameDetails', { game: item })}
+            onPress={() => navigation.navigate('GameDetails', { game: { ...item }})}
             style={[styles.cardContainer, { width: CARD_WIDTH, marginRight: CARD_SPACING }]}
           >
             <View style={styles.card}>
