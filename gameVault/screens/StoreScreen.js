@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, ScrollView, StyleSheet, StatusBar, Platform, Text, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import NavBar from '../components/navbar';
 import Carousel from '../components/StoreScreen/carouselbanner';
 import SectionContainer from '../components/StoreScreen/sectioncontainer';
