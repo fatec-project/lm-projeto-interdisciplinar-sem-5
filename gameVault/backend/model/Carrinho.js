@@ -1,4 +1,3 @@
-// Carrinho.js
 export default class Carrinho {
   constructor(usuarioId, jogoId) {
     if (!Carrinho.isValid(usuarioId, jogoId)) {

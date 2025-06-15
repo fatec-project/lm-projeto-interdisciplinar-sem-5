@@ -25,7 +25,6 @@ const CartScreen = () => {
           name: `Jogo ${item.jogoId}`,
           cover: { url: 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1r76.jpg' },
           price: 129.90,
-          quantity: item.quantidade
         }));
         
         setCartItems(jogosDoCarrinho);
@@ -40,7 +39,7 @@ const CartScreen = () => {
   }, [user]);
 
   const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return cartItems.reduce((total, item) => total + item.price, 0);
   };
 
   const handleRemoveItem = async (jogoId) => {
@@ -49,21 +48,6 @@ const CartScreen = () => {
       setCartItems(cartItems.filter(item => item.id !== jogoId));
     } catch (error) {
       Alert.alert('Erro', 'Não foi possível remover o item do carrinho');
-    }
-  };
-
-  const handleUpdateQuantity = async (jogoId, newQuantity) => {
-    if (newQuantity < 1) return;
-    
-    try {
-      await GameVaultAPI.carrinho.remover(user.id, jogoId);
-      await GameVaultAPI.carrinho.adicionar(user.id, jogoId, newQuantity);
-      
-      setCartItems(cartItems.map(item => 
-        item.id === jogoId ? { ...item, quantity: newQuantity } : item
-      ));
-    } catch (error) {
-      Alert.alert('Erro', 'Não foi possível atualizar a quantidade');
     }
   };
 
@@ -96,25 +80,6 @@ const CartScreen = () => {
       <View style={styles.itemDetails}>
         <Text style={styles.itemName}>{item.name}</Text>
         <Text style={styles.itemPrice}>R$ {item.price.toFixed(2)}</Text>
-        
-        <View style={styles.quantityContainer}>
-          <TouchableOpacity 
-            onPress={() => handleUpdateQuantity(item.id, item.quantity - 1)}
-            disabled={item.quantity <= 1}
-          >
-            <Ionicons 
-              name="remove-circle" 
-              size={24} 
-              color={item.quantity <= 1 ? '#ccc' : '#6200ee'} 
-            />
-          </TouchableOpacity>
-          
-          <Text style={styles.quantityText}>{item.quantity}</Text>
-          
-          <TouchableOpacity onPress={() => handleUpdateQuantity(item.id, item.quantity + 1)}>
-            <Ionicons name="add-circle" size={24} color="#6200ee" />
-          </TouchableOpacity>
-        </View>
       </View>
       
       <TouchableOpacity 
@@ -259,15 +224,6 @@ const styles = StyleSheet.create({
     color: '#bbb',
     fontSize: 14,
     marginBottom: 8,
-  },
-  quantityContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  quantityText: {
-    color: '#fff',
-    marginHorizontal: 12,
-    fontSize: 16,
   },
   removeButton: {
     padding: 8,
