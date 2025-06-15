@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, ScrollView, StyleSheet, StatusBar, Platform, Text, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import NavBar from '../components/navbar';
 import Carousel from '../components/StoreScreen/carouselbanner';
 import SectionContainer from '../components/StoreScreen/sectioncontainer';
@@ -9,13 +10,6 @@ import GameListCard from '../components/gamelistcard';
 const StoreScreen = ({ navigation }) => {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const bannerGames = [
-    { id: 338067, source: require('../assets/Banner1.png') },
-    { id: 347668, source: require('../assets/Banner2.png') },
-    { id: 171233, source: require('../assets/Banner3.png') },
-    { id: 325594, source: require('../assets/Banner4.png') }
-  ];
 
   const sections = {
     newReleases: {
@@ -30,7 +24,21 @@ const StoreScreen = ({ navigation }) => {
       image: require('../assets/rpg-bg.png'),
       ids: [171233, 1877, 267306, 2155]
     },
+    sega: {
+      title: "Promoção SEGA!",
+      color: "#023e8a",
+      image: require('../assets/Banner4.png'),
+      ids: [150010, 217623, 114283, 120278]
+    },
   };
+
+  const bannerGames = [
+    { id: 338067, source: require('../assets/Banner1.png') },
+    { id: 347668, source: require('../assets/Banner2.png') },
+    { id: 171233, source: require('../assets/Banner3.png') },
+    { section: 'sega', source: require('../assets/Banner4.png') }
+  ];
+
 
   const trendIds = [251833, 31551, 305152, 325594, 284716, 132181]; 
 
@@ -62,14 +70,25 @@ const StoreScreen = ({ navigation }) => {
     });
   };
 
+  const handleBannerPress = (item) => {
+    if (item.id) {
+      navigation.navigate('GameDetails', { game: { id: item.id } });
+    } else if (item.section && sections[item.section]) {
+      navigateToSection(sections[item.section]);
+    }
+  };
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <NavBar />
       <ScrollView 
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
       >
-        <Carousel artworks={bannerGames} />
+        <Carousel
+         artworks={bannerGames} 
+         onItemPress={handleBannerPress}
+         />
 
         <SectionContainer 
           title={sections.newReleases.title} 
@@ -95,7 +114,7 @@ const StoreScreen = ({ navigation }) => {
           ))
         )}
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -109,9 +128,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: Platform.OS === 'android' ? 20 : 16,
-  },
-  sectionHeader: {
-    paddingHorizontal: 16,
   },
   sectionTitle: {
     color: '#e0e0e0',

@@ -6,12 +6,15 @@ import {
   ScrollView, 
   ImageBackground, 
   Dimensions,
-  ActivityIndicator
+  ActivityIndicator,
+  TouchableOpacity
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import GameListCard from '../components/gamelistcard';
 
-const SectionScreen = ({ route }) => {
+const SectionScreen = ({ navigation, route }) => {
   const { title, color, image, gameIds } = route.params;
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,36 +39,49 @@ const SectionScreen = ({ route }) => {
   }, [gameIds]);
 
   return (
-    <ScrollView style={styles.container}>
-      <ImageBackground
-        source={image}
-        style={styles.headerImage}
-        blurRadius={2}
-      >
-        <LinearGradient
-          colors={['rgba(0,0,0,0.7)', 'rgba(0,0,0,0.5)', 'transparent']}
-          style={styles.gradient}
-        />
-        <Text style={styles.title}>{title}</Text>
-      </ImageBackground>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.container}>
+        <ImageBackground
+          source={image}
+          style={styles.headerImage}
+          blurRadius={2}
+        >
+          <LinearGradient
+            colors={['rgba(0,0,0,0.7)', 'rgba(0,0,0,0.5)', 'transparent']}
+            style={styles.gradient}
+          />
+          <Text style={styles.title}>{title}</Text>
+        </ImageBackground>
 
-      <View style={styles.content}>
-        {loading ? (
-          <ActivityIndicator size="large" color={color} style={styles.loading} />
-        ) : (
-          games.map(game => (
-            <GameListCard key={game.id} game={game} />
-          ))
-        )}
-      </View>
-    </ScrollView>
+        <View style={styles.content}>
+          {loading ? (
+            <ActivityIndicator size="large" color={color} style={styles.loading} />
+          ) : (
+            games.map(game => (
+              <GameListCard key={game.id} game={game} />
+            ))
+          )}
+        </View>
+      </ScrollView>
+      
+      {/* Botão de voltar */}
+      <TouchableOpacity 
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Ionicons name="arrow-back" size={24} color="#fff" />
+      </TouchableOpacity>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: '#051923',
+  },
+  container: {
+    flex: 1,
   },
   headerImage: {
     width: '100%',
@@ -93,6 +109,18 @@ const styles = StyleSheet.create({
   },
   loading: {
     marginVertical: 40,
+  },
+  backButton: {
+    position: 'absolute',
+    top: 40,
+    left: 20,
+    zIndex: 10,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 20,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

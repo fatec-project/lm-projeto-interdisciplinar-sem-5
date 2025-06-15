@@ -21,8 +21,11 @@
     "@react-navigation/native": "*",
     "react-native-snap-carousel": "*",
     "react-native-gesture-handler": "~2.24.0",
+    "@react-navigation/bottom-tabs": "^7.3.15",
+    "@react-navigation/native-stack": "*",
     "react-native-safe-area-context": "5.4.0",
-    "react-native-reanimated-carousel": "*"
+    "react-native-reanimated-carousel": "*",
+    "@react-native-async-storage/async-storage": "2.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

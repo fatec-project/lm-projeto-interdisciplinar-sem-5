@@ -1,27 +1,24 @@
 import React from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import GameDetailsScreen from './screens/GameDetailsScreen';
-import StoreScreen from './screens/StoreScreen';
-import SectionScreen from './screens/SectionScreen';
+import { AuthStack } from './navigation/AuthStack';
+import { MainTabs } from './navigation/MainTabs';
+import { UserProvider, useUser } from './context/UserContext';
 
-const Stack = createStackNavigator();
+const AppContent = () => {
+  const { user } = useUser();
 
-const App = () => {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Store"
-        screenOptions={{
-          headerShown: false,
-          cardStyle: { backgroundColor: '#051923' },
-        }}>
-        <Stack.Screen name="Store" component={StoreScreen} />
-        <Stack.Screen name="GameDetails" component={GameDetailsScreen} />
-        <Stack.Screen name="SectionScreen" component={SectionScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+  return user ? <MainTabs /> : <AuthStack />;
 };
 
-export default App;
+export default function App() {
+  return (
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <UserProvider>
+          <AppContent />
+        </UserProvider>
+      </NavigationContainer>
+    </SafeAreaProvider>
+  );
+}
