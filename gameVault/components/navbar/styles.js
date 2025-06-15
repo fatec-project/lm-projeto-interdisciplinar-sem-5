@@ -5,7 +5,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 15,
+    paddingHorizontal: 15,
     backgroundColor: '#051923',
     borderBottomWidth: 1,
     borderBottomColor: '#284b63',
@@ -15,23 +15,27 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },
+  leftContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#e0e0e0',
   },
+  userName: {
+    fontSize: 16,
+    color: '#e0e0e0',
+  },
   iconsContainer: {
     flexDirection: 'row',
-    width: 80,
-    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 15,
   },
   iconButton: {
     padding: 5,
-  },
-  userName: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#e0e0e0',
   },
   cartBadge: {
     position: 'relative',

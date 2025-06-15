@@ -65,7 +65,7 @@ const StoreScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <NavBar />
+      <NavBar navigation={navigation}/>
       <ScrollView 
         style={styles.content}
         contentContainerStyle={styles.scrollContent}

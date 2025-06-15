@@ -140,7 +140,7 @@ const CartScreen = ({ navigation }) => {
           <Text style={styles.emptyText}>Seu carrinho está vazio</Text>
           <TouchableOpacity 
             style={styles.browseButton}
-            onPress={() => navigation.navigate('Loja')}
+            onPress={() => navigation.navigate('StoreMain')}
           >
             <Text style={styles.browseButtonText}>Explorar Loja</Text>
           </TouchableOpacity>
