@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import GameVaultAPI from '../backend/index.js';
+import { useUser } from '../context/UserContext';
 
 const LoginScreen = ({ navigation }) => {
   const [identificador, setIdentificador] = useState('');
   const [senha, setSenha] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { login } = useUser();
 
   const handleLogin = async () => {
     if (!identificador || !senha) {
@@ -19,6 +21,7 @@ const LoginScreen = ({ navigation }) => {
     setLoading(true);
     try {
       const usuario = await GameVaultAPI.usuarios.login({ identificador: identificador, senha: senha });
+      login(usuario);
       navigation.replace('Main');
     } catch (error) {
       Alert.alert('Erro', error.message || 'Falha no login');
