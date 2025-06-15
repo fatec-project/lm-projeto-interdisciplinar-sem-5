@@ -20,7 +20,7 @@ const RegisterScreen = ({ navigation }) => {
     try {
       const usuario = await GameVaultAPI.usuarios.criar({ nome: nome, email: email, senha: senha });
       Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
-      navigation.replace('Store');
+      navigation.replace('Main');
     } catch (error) {
       Alert.alert('Erro', error.message || 'Falha no cadastro');
     } finally {

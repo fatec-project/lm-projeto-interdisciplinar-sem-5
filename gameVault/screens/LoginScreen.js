@@ -18,7 +18,7 @@ const LoginScreen = ({ navigation }) => {
     setLoading(true);
     try {
       const usuario = await GameVaultAPI.usuarios.login({ identificador: identificador, senha: senha });
-      navigation.replace('Store');
+      navigation.replace('Main');
     } catch (error) {
       Alert.alert('Erro', error.message || 'Falha no login');
     } finally {
