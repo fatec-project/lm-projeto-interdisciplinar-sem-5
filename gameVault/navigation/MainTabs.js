@@ -1,6 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import StoreScreen from '../screens/StoreScreen';
+import { StoreStackNavigator } from './StoreStackNavigator';
 import LibraryScreen from '../screens/LibraryScreen';
 import AccountScreen from '../screens/AccountScreen';
 
@@ -22,7 +22,7 @@ export const MainTabs = () => (
       headerShown: false,
     })}
   >
-    <Tab.Screen name="Loja" component={StoreScreen} />
+    <Tab.Screen name="Loja" component={StoreStackNavigator} />
     <Tab.Screen name="Biblioteca" component={LibraryScreen} />
     <Tab.Screen name="Conta" component={AccountScreen} />
   </Tab.Navigator>

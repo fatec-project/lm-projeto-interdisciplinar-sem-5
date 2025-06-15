@@ -26,7 +26,6 @@ const RegisterScreen = ({ navigation }) => {
       
       // Faz login automaticamente após o cadastro
       login(usuario);
-      navigation.replace('Main');
     } catch (error) {
       Alert.alert('Erro', error.message || 'Falha no cadastro');
     } finally {
