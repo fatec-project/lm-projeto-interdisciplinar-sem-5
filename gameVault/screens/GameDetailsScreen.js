@@ -8,7 +8,8 @@ import {
   ImageBackground,
   Dimensions,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
+  Alert
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,11 +18,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import PurchaseContainer from '../components/GameDetailsScreen/purchasecontainer';
 import ScreenshotCarousel from '../components/GameDetailsScreen/screenshotcarousel';
 import RatingComponent from '../components/GameDetailsScreen/ratingcomponent';
+import GameVaultAPI from '../backend/index.js';
+import { useUser } from '../context/UserContext';
 
 const { width } = Dimensions.get('window');
 
 const GameDetailsScreen = ({ route }) => {
   const navigation = useNavigation();
+  const { user } = useUser();
   const { game } = route.params;
   const [gameDetails, setGameDetails] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -60,6 +64,21 @@ const GameDetailsScreen = ({ route }) => {
     ? `https:${gameDetails.cover.url.replace('t_thumb', 't_cover_big')}`
     : null;
 
+  const handleAddToCart = async () => {
+    if (!user) {
+      Alert.alert('Atenção', 'Você precisa estar logado para adicionar itens ao carrinho');
+      return;
+    }
+
+    try {
+      await GameVaultAPI.carrinho.adicionar(user.id, game.id, 1);
+      Alert.alert('Sucesso', 'Jogo adicionado ao carrinho com sucesso!');
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      Alert.alert('Erro', 'Não foi possível adicionar o jogo ao carrinho');
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -94,6 +113,7 @@ const GameDetailsScreen = ({ route }) => {
             originalPrice="R$ 199,90"
             discount="-30%"
             finalPrice="R$ 139,90"
+            onAddToCart={handleAddToCart}
           />
           
           {gameDetails.screenshots?.length > 0 && (

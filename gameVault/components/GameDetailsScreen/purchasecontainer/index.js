@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from './styles';
 
-const PurchaseContainer = ({ originalPrice, discount, finalPrice, onAddToCart, onAddToWishlist }) => {
+const PurchaseContainer = ({ originalPrice, discount, finalPrice, onAddToCart }) => {
   return (
     <View style={styles.container}>
       <View style={styles.priceSection}>
@@ -26,13 +26,13 @@ const PurchaseContainer = ({ originalPrice, discount, finalPrice, onAddToCart, o
           <Text style={styles.buttonText}>Adicionar ao Carrinho</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity 
+        {/* <TouchableOpacity 
           style={[styles.button, styles.wishlistButton]}
           onPress={onAddToWishlist}
         >
           <Ionicons name="heart" size={20} color="#2dc653" />
           <Text style={[styles.buttonText, {color: '#2dc653'}]}>Lista de Desejos</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );
