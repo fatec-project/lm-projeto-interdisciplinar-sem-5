@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, ScrollView, StyleSheet, StatusBar, Platform, Text, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NavBar from '../components/navbar';
 import Carousel from '../components/StoreScreen/carouselbanner';
@@ -7,7 +8,8 @@ import SectionContainer from '../components/StoreScreen/sectioncontainer';
 import GameCarousel from '../components/StoreScreen/gamecarousel';
 import GameListCard from '../components/gamelistcard';
 
-const StoreScreen = ({ navigation }) => {
+const StoreScreen = () => {
+  const navigation = useNavigation();
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -65,7 +67,7 @@ const StoreScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <NavBar navigation={navigation}/>
+      <NavBar />
       <ScrollView 
         style={styles.content}
         contentContainerStyle={styles.scrollContent}

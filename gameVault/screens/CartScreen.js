@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import GameVaultAPI from '../backend/index.js';
 import { useUser } from '../context/UserContext';
 
-const CartScreen = ({ navigation }) => {
+const CartScreen = () => {
+  const navigation = useNavigation();
   const { user } = useUser();
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);

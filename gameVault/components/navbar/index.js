@@ -1,11 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StatusBar, Platform } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useUser } from '../../context/UserContext';
 import GameVaultAPI from '../../backend/index.js';
 import styles from './styles';
 
-const NavBar = ({ navigation }) => {
+const NavBar = () => {
+  const navigation = useNavigation();
   const { user } = useUser();
   const [cartCount, setCartCount] = useState(0);
   const paddingTop = Platform.OS === 'android' ? 

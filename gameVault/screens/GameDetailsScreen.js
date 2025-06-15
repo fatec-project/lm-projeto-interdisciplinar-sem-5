@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import PurchaseContainer from '../components/GameDetailsScreen/purchasecontainer';
 import ScreenshotCarousel from '../components/GameDetailsScreen/screenshotcarousel';
@@ -19,7 +20,8 @@ import RatingComponent from '../components/GameDetailsScreen/ratingcomponent';
 
 const { width } = Dimensions.get('window');
 
-const GameDetailsScreen = ({ route, navigation }) => {
+const GameDetailsScreen = ({ route }) => {
+  const navigation = useNavigation();
   const { game } = route.params;
   const [gameDetails, setGameDetails] = useState(null);
   const [loading, setLoading] = useState(true);

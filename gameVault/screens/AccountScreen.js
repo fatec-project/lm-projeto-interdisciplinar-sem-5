@@ -1,9 +1,11 @@
 import React, { useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useUser } from '../context/UserContext';
 
-const AccountScreen = ({ navigation }) => {
+const AccountScreen = () => {
+  const navigation = useNavigation();
   const { user, logout } = useUser();
 
   const handleLogout = async () => {
