@@ -63,9 +63,9 @@ const MainTabs = () => {
 
 const App = () => {
   return (
-    <UserProvider>
-      <SafeAreaProvider>
-        <NavigationContainer>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <UserProvider>
           <Stack.Navigator
             initialRouteName="Login"
             screenOptions={{
@@ -84,9 +84,9 @@ const App = () => {
             <Stack.Screen name="GameDetails" component={GameDetailsScreen} />
             <Stack.Screen name="SectionScreen" component={SectionScreen} />
           </Stack.Navigator>
-        </NavigationContainer>
-      </SafeAreaProvider>
-    </UserProvider>
+        </UserProvider>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 };
 

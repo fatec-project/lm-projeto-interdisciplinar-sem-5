@@ -3,7 +3,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import GameVaultAPI from '../backend/index.js';
-import { useUser } from '../context/UserContext';
+//import { useUser } from '../context/UserContext';
 
 const LibraryScreen = ({ navigation }) => {
   const [games, setGames] = useState([]);
