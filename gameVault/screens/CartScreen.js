@@ -51,24 +51,30 @@ const CartScreen = () => {
     }
   };
 
-  const handleCheckout = () => {
-    Alert.alert(
-      'Compra Finalizada',
-      `Pagamento via ${paymentMethod === 'pix' ? 'PIX' : 'Cartão de Crédito'} no valor de R$ ${calculateTotal().toFixed(2)}`,
-      [
-        { 
-          text: 'OK', 
-          onPress: async () => {
-            try {
-              await GameVaultAPI.carrinho.limpar(user.id);
-              navigation.goBack();
-            } catch (error) {
-              console.error('Erro ao limpar carrinho:', error);
-            }
+  const handleCheckout = async () => {
+    try {
+      // Adicionar todos os jogos do carrinho à biblioteca
+      for (const item of cartItems) {
+        await GameVaultAPI.biblioteca.adicionar(user.id, item.id);
+      }
+      
+      // Limpar o carrinho
+      await GameVaultAPI.carrinho.limpar(user.id);
+      
+      Alert.alert(
+        'Compra Finalizada',
+        `Pagamento via ${paymentMethod === 'pix' ? 'PIX' : 'Cartão de Crédito'} realizado com sucesso!`,
+        [
+          { 
+            text: 'OK', 
+            onPress: () => navigation.goBack()
           }
-        }
-      ]
-    );
+        ]
+      );
+    } catch (error) {
+      console.error('Erro ao finalizar compra:', error);
+      Alert.alert('Erro', 'Não foi possível finalizar a compra');
+    }
   };
 
   const renderItem = ({ item }) => (
