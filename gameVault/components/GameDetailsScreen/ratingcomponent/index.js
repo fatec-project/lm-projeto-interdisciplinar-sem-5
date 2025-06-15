@@ -5,7 +5,7 @@ import styles from './styles';
 import { useUser } from '../../../context/UserContext';
 import GameVaultAPI from '../../../backend/index.js';
 
-const RatingComponent = ({ gameId }) => {
+const RatingComponent = ({ gameId, canRate }) => {
   const { user } = useUser();
   const [totalRatings, setTotalRatings] = useState(0);
   const [likes, setLikes] = useState(0);
@@ -162,9 +162,10 @@ const RatingComponent = ({ gameId }) => {
             styles.rateButton,
             styles.likeButton,
             userRating === true && styles.activeButton,
+            (!canRate || loading) && { opacity: 0.5 }
           ]}
           onPress={() => handleRate(true)}
-          disabled={loading}
+          disabled={loading || !canRate}
         >
           <Ionicons name="thumbs-up" size={20} color="#fff" />
           <Text style={styles.buttonText}>Gostei</Text>
@@ -175,9 +176,10 @@ const RatingComponent = ({ gameId }) => {
             styles.rateButton,
             styles.dislikeButton,
             userRating === false && styles.activeButton,
+            (!canRate || loading) && { opacity: 0.5 }
           ]}
           onPress={() => handleRate(false)}
-          disabled={loading}
+          disabled={loading || !canRate}
         >
           <Ionicons name="thumbs-down" size={20} color="#fff" />
           <Text style={styles.buttonText}>Não Gostei</Text>
