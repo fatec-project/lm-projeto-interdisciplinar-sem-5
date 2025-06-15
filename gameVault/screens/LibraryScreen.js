@@ -1,5 +1,6 @@
+
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import GameVaultAPI from '../backend/index.js';
@@ -19,28 +20,39 @@ const LibraryScreen = () => {
       const biblioteca = await GameVaultAPI.biblioteca.listar(user.id);
       const BACKEND_URL = "https://igdb-test-production.up.railway.app/game/";
 
+      if (!biblioteca.length) {
+        setGames([]);
+        return;
+      }
+
       const promises = biblioteca.map(item =>
         fetch(`${BACKEND_URL}${item.jogoId}`).then(res => res.json())
       );
 
-      const jogos = await Promise.all(promises);
-      const jogosValidos = jogos.filter(game => game && game.cover);
+      const results = await Promise.allSettled(promises);
 
-      const jogosDaBiblioteca = jogosValidos.map(game => ({
-        id: game.id,
-        name: game.name,
-        cover: { url: `https:${game.cover.url}` }
-      }));
+      const jogosValidos = results
+        .filter(result => result.status === 'fulfilled' && result.value && result.value.cover)
+        .map(result => {
+          const game = result.value;
+          return {
+            id: game.id,
+            name: game.name,
+            cover: {
+              url: `https:${game.cover.url.replace('t_thumb', 't_cover_big_2x')}`
+            }
+          };
+        });
 
-      setGames(jogosDaBiblioteca);
+      setGames(jogosValidos);
     } catch (error) {
       console.error('Erro ao carregar biblioteca:', error);
+      Alert.alert('Erro', 'Não foi possível carregar sua biblioteca');
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Atualiza sempre que a tela ganha foco
   useFocusEffect(
     useCallback(() => {
       fetchLibrary();
@@ -52,10 +64,7 @@ const LibraryScreen = () => {
       style={styles.gameItem}
       onPress={() => navigation.navigate('GameDetails', { game: { ...item }})}
     >
-      <Image
-        source={{ uri: item.cover.url }}
-        style={styles.gameImage}
-      />
+      <Image source={{ uri: item.cover.url }} style={styles.gameImage} resizeMode="cover" />
       <Text style={styles.gameTitle}>{item.name}</Text>
     </TouchableOpacity>
   );
@@ -71,14 +80,10 @@ const LibraryScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Minha Biblioteca</Text>
-      
       {games.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>Sua biblioteca está vazia</Text>
-          <TouchableOpacity 
-            style={styles.browseButton}
-            onPress={() => navigation.navigate('StoreMain')}
-          >
+          <TouchableOpacity style={styles.browseButton} onPress={() => navigation.navigate('StoreMain')}>
             <Text style={styles.browseButtonText}>Explorar Loja</Text>
           </TouchableOpacity>
         </View>
@@ -96,61 +101,61 @@ const LibraryScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#121212',
-    padding: 16,
+  container: { 
+    flex: 1, 
+    backgroundColor: '#121212', 
+    padding: 16 
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#121212',
+  loadingContainer: { 
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: '#121212' 
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 20,
-    marginTop: 10,
+  title: { 
+    fontSize: 24, 
+    fontWeight: 'bold', 
+    color: '#fff', 
+    marginBottom: 20, 
+    marginTop: 10 
   },
-  gameItem: {
-    flex: 1,
-    margin: 8,
-    alignItems: 'center',
+  gameItem: { 
+    flex: 1, 
+    margin: 8, 
+    alignItems: 'center' 
   },
-  gameImage: {
-    width: 150,
-    height: 200,
-    borderRadius: 8,
-    resizeMode: 'cover',
+  gameImage: { 
+    width: 150, 
+    height: 200, 
+    borderRadius: 8, 
+    resizeMode: 'cover' 
   },
-  gameTitle: {
-    color: '#fff',
-    marginTop: 8,
-    textAlign: 'center',
+  gameTitle: { 
+    color: '#fff', 
+    marginTop: 8, 
+    textAlign: 'center' 
   },
-  listContent: {
-    paddingBottom: 20,
+  listContent: { 
+    paddingBottom: 20 
   },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  emptyContainer: { 
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center' 
   },
-  emptyText: {
-    color: '#fff',
-    fontSize: 18,
-    marginBottom: 20,
+  emptyText: { 
+    color: '#fff', 
+    fontSize: 18, 
+    marginBottom: 20 
   },
-  browseButton: {
+  browseButton: { 
     backgroundColor: '#6200ee',
-    padding: 15,
-    borderRadius: 5,
+    padding: 15, 
+    borderRadius: 5 
   },
-  browseButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+  browseButtonText: { 
+    color: '#fff', 
+    fontWeight: 'bold' 
   },
 });
 
