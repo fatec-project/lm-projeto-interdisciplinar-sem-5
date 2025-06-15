@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import GameVaultAPI from '../backend/index.js';
+import { useUser } from '../context/UserContext';
 
 const RegisterScreen = ({ navigation }) => {
   const [nome, setNome] = useState('');
@@ -10,6 +10,7 @@ const RegisterScreen = ({ navigation }) => {
   const [senha, setSenha] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { login } = useUser();
 
   const handleCadastro = async () => {
     if (!nome || !email || !senha) {
@@ -21,6 +22,9 @@ const RegisterScreen = ({ navigation }) => {
     try {
       const usuario = await GameVaultAPI.usuarios.criar({ nome: nome, email: email, senha: senha });
       Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
+      
+      // Faz login automaticamente após o cadastro
+      login(usuario);
       navigation.replace('Main');
     } catch (error) {
       Alert.alert('Erro', error.message || 'Falha no cadastro');
