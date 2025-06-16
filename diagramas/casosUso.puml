@@ -1,0 +1,26 @@
+@startuml casosUso
+left to right direction
+
+actor Usuário
+
+rectangle "Autenticação" {
+  (Criar Conta) 
+  (Logar)
+}
+
+rectangle "Funcionalidades" {
+  (Visualizar Loja) .> (Ver Detalhes do Jogo)
+  (Visualizar Biblioteca) .> (Ver Detalhes do Jogo)
+  (Ver Detalhes do Jogo) .> (Avaliar Jogo)
+  (Ver Detalhes do Jogo) .> (Adicionar Jogo ao Carrinho)
+  (Gerenciar Carrinho) .> (Comprar Jogo)
+  (Gerenciar Carrinho) .> (Remover Jogo)
+}
+
+Usuário --> (Criar Conta)
+Usuário --> (Logar)
+Usuário --> (Visualizar Loja)
+Usuário --> (Visualizar Biblioteca)
+Usuário --> (Gerenciar Carrinho)
+
+@enduml

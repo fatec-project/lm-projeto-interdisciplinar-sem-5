@@ -1,0 +1,32 @@
+@startuml comprarJogo
+title Diagrama de Atividades - Comprar Jogo
+
+start
+
+:Logar na conta;
+:Validar login;
+:Selecionar jogo na Loja;
+:Exibir detalhes do jogo;
+:Verificar biblioteca e carrinho;
+
+if (Jogo já possuído?) then (Sim)
+  :Bloquear ação;
+  stop
+else (Não)
+  if (Jogo já no carrinho?) then (Sim)
+    :Bloquear ação duplicada;
+    stop
+  else (Não)
+    :Adicionar jogo ao carrinho;
+    :Voltar para tela inicial;
+    :Acessar carrinho;
+    :Exibir carrinho;
+    :Selecionar pagamento;
+    :Processar pagamento;
+    :Remover do carrinho;
+    :Adicionar à biblioteca;
+  endif
+endif
+
+stop
+@enduml
