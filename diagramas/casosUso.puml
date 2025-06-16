@@ -9,22 +9,18 @@ rectangle "Autenticação" {
 }
 
 rectangle "Funcionalidades" {
-  (Avaliar Jogo)
-  (Gerenciar Biblioteca) .> (Adicionar Jogo)
-  (Gerenciar Carrinho) .> (Remover Item)
-  (Gerenciar Lista Desejos)
+  (Visualizar Loja) .> (Ver Detalhes do Jogo)
+  (Visualizar Biblioteca) .> (Ver Detalhes do Jogo)
+  (Ver Detalhes do Jogo) .> (Avaliar Jogo)
+  (Ver Detalhes do Jogo) .> (Adicionar Jogo ao Carrinho)
+  (Gerenciar Carrinho) .> (Comprar Jogo)
+  (Gerenciar Carrinho) .> (Remover Jogo)
 }
 
 Usuário --> (Criar Conta)
 Usuário --> (Logar)
-Usuário --> (Avaliar Jogo)
-Usuário --> (Gerenciar Biblioteca)
+Usuário --> (Visualizar Loja)
+Usuário --> (Visualizar Biblioteca)
 Usuário --> (Gerenciar Carrinho)
-Usuário --> (Gerenciar Lista Desejos)
 
-note right
-  Fluxo principal:
-  1. Criar conta/logar
-  2. Acessar funcionalidades
-end note
 @enduml

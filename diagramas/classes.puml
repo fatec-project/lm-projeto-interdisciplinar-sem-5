@@ -1,95 +1,101 @@
 @startuml classes
-skinparam monochrome true
-skinparam classAttributeIconSize 0
+title Diagrama de Classes - GameVault
 
-package "Model" {
+package Model {
   class Avaliacao {
-    + jogoId: number
-    + usuarioId: number
-    + gostou: boolean
-    + isValid(): boolean
-    + toJSON(): object
+    +jogoId: number
+    +usuarioId: number
+    +gostou: boolean
+    +dataAvaliacao: Date
+    +isValid(): boolean
+    +toString(): string
   }
-  
+
   class Biblioteca {
-    + usuarioId: number
-    + jogoId: number
-    + dataAdicao: Date
-    + isValid(): boolean
+    +usuarioId: number
+    +jogoId: number
+    +dataAdicao: Date
+    +isValid(): boolean
+    +toJSON(): object
   }
-  
+
   class Carrinho {
-    + usuarioId: number
-    + jogoId: number
-    + quantidade: number
-    + incrementarQuantidade(): number
+    +usuarioId: number
+    +jogoId: number
+    +dataAdicao: Date
+    +isValid(): boolean
+    +toString(): string
   }
-  
-  class ListaDesejos {
-    + usuarioId: number
-    + jogoId: number
-    + dataAdicao: Date
-  }
-  
+
   class Usuario {
-    + id: number
-    + nome: string
-    + email: string
-    + senha: string
-    + toSafeObject(): object
+    +id: number
+    +nome: string
+    +email: string
+    +senha: string
+    +isValid(): boolean
+    +toSafeObject(): object
+    +atualizar(dados): void
   }
 }
 
-package "Controller" {
+package Controller {
   class AvaliacaoController {
-    + avaliar(jogoId, usuarioId, gostou)
-    + getAvaliacoesByJogo(jogoId)
+    +avaliar(jogoId, usuarioId, gostou): boolean
+    +remover(usuarioId, jogoId): boolean
+    +getAvaliacoesByJogo(jogoId): Avaliacao[]
   }
-  
+
   class BibliotecaController {
-    + adicionar(usuarioId, jogoId)
-    + remover(usuarioId, jogoId)
+    +adicionar(usuarioId, jogoId): boolean
+    +remover(usuarioId, jogoId): boolean
+    +listar(usuarioId): Biblioteca[]
   }
-  
+
   class CarrinhoController {
-    + addItem(usuarioId, jogoId, quantidade)
-    + removeItem(usuarioId, jogoId)
-  }
-  
-  class ListaDesejosController {
-    + adicionar(usuarioId, jogoId)
-    + remover(usuarioId, jogoId)
+    +adicionar(usuarioId, jogoId): boolean
+    +remover(usuarioId, jogoId): boolean
+    +limpar(usuarioId): boolean
+    +listar(usuarioId): Carrinho[]
   }
 
   class UsuarioController {
-    + criar(nome, email, senha)
-    + atualizar(id, nome, email, senha)
+    +criar(usuario): Usuario
+    +login(email, senha): Usuario
+    +atualizar(id, dados): boolean
   }
 }
 
-package "View" {
-  interface "Frontend" {
-    + exibirListaJogos()
-    + exibirCarrinho()
+package View {
+  class GameDetailsScreen {
+    +render(): void
+    +handleAddToCart(): void
+    +handleRating(): void
+  }
+
+  class CartScreen {
+    +render(): void
+    +handleCheckout(): void
+  }
+
+  class AuthScreen {
+    +render(): void
+  }
+
+  class AccountScreen {
+    +render(): void
   }
 }
 
-AvaliacaoController --> Avaliacao
-BibliotecaController --> Biblioteca
-CarrinhoController --> Carrinho
-ListaDesejosController --> ListaDesejos
-UsuarioController --> Usuario
+AvaliacaoController --> Avaliacao : manipula
+BibliotecaController --> Biblioteca : manipula
+CarrinhoController --> Carrinho : manipula
+UsuarioController --> Usuario : manipula
 
-"Frontend" --> AvaliacaoController
-"Frontend" --> BibliotecaController
-"Frontend" --> CarrinhoController
-"Frontend" --> ListaDesejosController
-"Frontend" --> UsuarioController
-
-note bottom of Model
-  Classes de modelo contêm:
-  - Atributos tipados
-  - Métodos de validação
-  - Métodos de serialização
-end note
+GameDetailsScreen --> CarrinhoController : usa
+GameDetailsScreen --> BibliotecaController : usa
+GameDetailsScreen --> AvaliacaoController : usa
+CartScreen --> CarrinhoController : usa
+CartScreen --> BibliotecaController : usa
+AuthScreen --> UsuarioController : usa
+AccountScreen --> UsuarioController : usa
 @enduml

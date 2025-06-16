@@ -11,14 +11,14 @@ rectangle "Frontend (Mobile)" {
 rectangle "Backend (Node.js)" {
   [Controllers] as controllers
   [Models] as models
-  [LocalForage] as storage
+  [AsyncStorage/localStorage] as storage
 }
 
 react --> controllers : HTTP/JSON
 expo --> react : Framework
 
 controllers --> models : Validação
-models --> storage : Persistência\n(IndexedDB/WebSQL)
+models --> storage : Persistência\n(AsyncStorage/localStorage)
 
 note right of react
   Tecnologias:
@@ -27,16 +27,8 @@ note right of react
   - Componentes funcionais
 end note
 
-note left of controllers
-  Tecnologias:
-  - ES Modules
-  - Jest para testes
-  - Arquitetura MVC
-end note
-
 note bottom of storage
   Persistência via:
-  - LocalForage 1.10+
   - Armazenamento local assíncrono
   - Compatível com React Native
 end note
