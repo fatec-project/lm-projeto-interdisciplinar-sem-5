@@ -2,7 +2,6 @@ import AvaliacaoController from './controller/AvaliacaoController.js';
 import BibliotecaController from './controller/BibliotecaController.js';
 import CarrinhoController from './controller/CarrinhoController.js';
 import UsuarioController from './controller/UsuarioController.js';
-import ListaDesejosController from './controller/ListaDesejosController.js';
 
 // Instâncias dos controllers
 const usuarioController = new UsuarioController();
@@ -41,13 +40,6 @@ const GameVaultAPI = {
     remover: (id) => usuarioController.remover(id)
   },
 
-  listaDesejos: {
-    adicionar: (usuarioId, jogoId) => listaDesejosController.adicionar(usuarioId, jogoId),
-    listar: (usuarioId) => listaDesejosController.getListaByUsuario(usuarioId),
-    remover: (usuarioId, jogoId) => listaDesejosController.remover(usuarioId, jogoId),
-    limpar: (usuarioId) => listaDesejosController.limparLista(usuarioId)
-  },
-
   utils: {
     tratarErro: (error) => {
       console.error('Erro na API:', error);
@@ -67,7 +59,6 @@ async function inicializar() {
       avaliacaoController.initializeDatabase(),
       bibliotecaController.initializeDatabase(),
       carrinhoController.initializeDatabase(),
-      listaDesejosController.initializeDatabase()
     ]);
     console.log('API GameVault inicializada com sucesso');
   } catch (error) {
