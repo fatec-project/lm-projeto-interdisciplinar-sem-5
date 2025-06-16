@@ -1,5 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StatusBar, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StatusBar,
+  Platform,
+  Image,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useUser } from '../../context/UserContext';
@@ -29,23 +36,51 @@ const NavBar = () => {
     fetchCartCount();
   }, [user]);
 
+  const handleCartPress = () => {
+    try {
+      console.log('Attempting to navigate to CartScreen');
+      navigation.navigate('Cart');
+    } catch (error) {
+      console.error('Failed to navigate to CartScreen:', error);
+      // Alternativa para navegação aninhada:
+      // navigation.navigate('StoreMain', { screen: 'CartScreen' });
+    }
+  };
+
   return (
     <>
       {Platform.OS === 'android' && <StatusBar backgroundColor="#051923" barStyle="light-content" />}
       <View style={[styles.navBar, { paddingTop }]}>
         <View style={styles.leftContainer}>
-          <Text style={styles.title}>Game Vault</Text>
-          {user && <Text style={styles.userName}>{user.nome}</Text>}
+          <TouchableOpacity 
+            style={styles.logoButton}
+            onPress={() => navigation.navigate('StoreMain')}
+          >
+            <Image 
+              source={require('../../assets/key.png')} 
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+          
+          {user && (
+            <Text style={styles.userGreeting}>
+              Olá, <Text style={styles.userName}>{user.nome.split(' ')[0]}!</Text>
+            </Text>
+          )}
         </View>
 
         <View style={styles.iconsContainer}>
-          <TouchableOpacity style={styles.iconButton}>
+          <TouchableOpacity 
+            style={styles.iconButton}
+            onPress={() => navigation.navigate('SearchScreen')}
+          >
             <Ionicons name="search" size={24} color="#e0e0e0" />
           </TouchableOpacity>
 
           <TouchableOpacity 
             style={styles.iconButton}
-            onPress={() => navigation.navigate('CartScreen')}
+            onPress={handleCartPress}
           >
             <View style={styles.cartBadge}>
               <Ionicons name="cart" size={24} color="#e0e0e0" />

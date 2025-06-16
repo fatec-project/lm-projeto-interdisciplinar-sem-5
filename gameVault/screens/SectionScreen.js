@@ -18,6 +18,7 @@ const SectionScreen = ({ navigation, route }) => {
   const { title, color, image, gameIds } = route.params;
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchGames = async () => {
@@ -65,7 +66,14 @@ const SectionScreen = ({ navigation, route }) => {
 
         <View style={styles.content}>
           {loading ? (
-            <ActivityIndicator size="large" color={color} style={styles.loading} />
+            <View style={styles.centerContainer}>
+              <ActivityIndicator size="large" color={color} />
+              <Text style={[styles.loadingText, { color }]}>Carregando jogos...</Text>
+            </View>
+          ) : error ? (
+            <View style={styles.centerContainer}>
+              <Text style={styles.errorText}>{error}</Text>
+            </View>
           ) : (
             games.map(game => (
               <GameListCard key={game.id} game={game} />
@@ -116,9 +124,22 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
+    minHeight: 200, // Garante espaço para o loading/error
   },
-  loading: {
-    marginVertical: 40,
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+  },
+  errorText: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
   },
   backButton: {
     position: 'absolute',

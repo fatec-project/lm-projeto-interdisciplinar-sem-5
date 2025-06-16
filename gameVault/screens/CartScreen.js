@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Alert } from 'react-native';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  FlatList, 
+  TouchableOpacity, 
+  ActivityIndicator,
+  Alert,
+  SafeAreaView,
+  ScrollView
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import GameVaultAPI from '../backend/index.js';
 import { useUser } from '../context/UserContext';
+import GameListCard from '../components/gamelistcard';
 
 const CartScreen = () => {
   const navigation = useNavigation();
@@ -90,39 +100,25 @@ const CartScreen = () => {
     }
   };
 
-  const renderItem = ({ item }) => (
-    <View style={styles.itemContainer}>
-      <Image
-        source={{ uri: item.cover.url }}
-        style={styles.itemImage}
-      />
-      <View style={styles.itemDetails}>
-        <Text style={styles.itemName}>{item.name}</Text>
-        <Text style={styles.itemPrice}>R$ {item.price.toFixed(2)}</Text>
-      </View>
-      
-      <TouchableOpacity 
-        style={styles.removeButton}
-        onPress={() => handleRemoveItem(item.id)}
-      >
-        <Ionicons name="trash" size={20} color="#ff4444" />
-      </TouchableOpacity>
-    </View>
-  );
-
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <Text>Carregando carrinho...</Text>
+        <ActivityIndicator size="large" color="#2dc653" />
       </View>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       {cartItems.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Ionicons name="cart-outline" size={80} color="#ccc" />
+          <TouchableOpacity 
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Ionicons name="arrow-back" size={24} color="#e0e0e0" />
+          </TouchableOpacity>
+          <Ionicons name="cart-outline" size={80} color="#4f5d75" />
           <Text style={styles.emptyText}>Seu carrinho está vazio</Text>
           <TouchableOpacity 
             style={styles.browseButton}
@@ -132,11 +128,30 @@ const CartScreen = () => {
           </TouchableOpacity>
         </View>
       ) : (
-        <>
+        <ScrollView style={styles.scrollContainer}>
+          <View style={styles.header}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
+            >
+              <Ionicons name="arrow-back" size={24} color="#e0e0e0" />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Meu Carrinho</Text>
+          </View>
+          
           <FlatList
             data={cartItems}
-            renderItem={renderItem}
+            renderItem={({ item }) => (
+              <View style={styles.gameCardContainer}>
+                <GameListCard 
+                  game={item} 
+                  isCartItem={true}
+                  onRemove={() => handleRemoveItem(item.id)}
+                />
+              </View>
+            )}
             keyExtractor={item => item.id.toString()}
+            scrollEnabled={false}
             contentContainerStyle={styles.listContent}
           />
           
@@ -152,6 +167,7 @@ const CartScreen = () => {
                 onPress={() => setPaymentMethod('pix')}
               >
                 <Text style={styles.paymentButtonText}>PIX</Text>
+                <Text style={styles.paymentMethodBonus}>10% de desconto</Text>
               </TouchableOpacity>
               
               <TouchableOpacity
@@ -162,6 +178,7 @@ const CartScreen = () => {
                 onPress={() => setPaymentMethod('credit')}
               >
                 <Text style={styles.paymentButtonText}>Crédito</Text>
+                <Text style={styles.paymentMethodBonus}>3x sem juros</Text>
               </TouchableOpacity>
             </View>
             
@@ -174,10 +191,10 @@ const CartScreen = () => {
               style={styles.checkoutButton}
               onPress={handleCheckout}
             >
-              <Text style={styles.checkoutButtonText}>Finalizar Compra</Text>
+              <Text style={styles.checkoutButtonText}>FINALIZAR COMPRA</Text>
             </TouchableOpacity>
           </View>
-        </>
+        </ScrollView>
       )}
     </SafeAreaView>
   );
@@ -186,124 +203,147 @@ const CartScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
-    padding: 16,
+    backgroundColor: '#051923',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#051923',
+  },
+  scrollContainer: {
+    flex: 1,
+    paddingBottom: 20,
+  },
+  backButton: {
+    position: 'absolute',
+    left: 15,
+    top: 15,
+    zIndex: 1,
+    padding: 8,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    marginBottom: 10,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#e0e0e0',
+    textAlign: 'center',
+    flex: 1,
+    marginRight: 24,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    margin: 20,
+    borderRadius: 15,
+    padding: 30,
   },
   emptyText: {
     fontSize: 18,
-    color: '#fff',
+    color: '#e0e0e0',
     marginVertical: 20,
+    textAlign: 'center',
   },
   browseButton: {
-    backgroundColor: '#6200ee',
-    padding: 15,
-    borderRadius: 5,
+    backgroundColor: '#2dc653',
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 8,
   },
   browseButtonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 16,
+  },
+  gameCardContainer: {
+    marginHorizontal: 10,
+    marginBottom: 0,
   },
   listContent: {
-    paddingBottom: 20,
-  },
-  itemContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#1e1e1e',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
-    alignItems: 'center',
-  },
-  itemImage: {
-    width: 60,
-    height: 80,
-    borderRadius: 4,
-  },
-  itemDetails: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  itemName: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  itemPrice: {
-    color: '#bbb',
-    fontSize: 14,
-    marginBottom: 8,
-  },
-  removeButton: {
-    padding: 8,
+    paddingBottom: 10,
   },
   paymentContainer: {
-    backgroundColor: '#1e1e1e',
-    borderRadius: 8,
-    padding: 16,
-    marginTop: 12,
+    backgroundColor: '#0a2d42',
+    marginHorizontal: 15,
+    borderRadius: 12,
+    padding: 20,
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#284b63',
   },
   sectionTitle: {
-    color: '#fff',
+    color: '#e0e0e0',
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 12,
+    marginBottom: 15,
   },
   paymentMethods: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: 20,
   },
   paymentButton: {
     flex: 1,
-    padding: 12,
-    borderRadius: 5,
-    backgroundColor: '#333',
+    padding: 15,
+    borderRadius: 8,
+    backgroundColor: '#284b63',
     alignItems: 'center',
-    marginHorizontal: 4,
+    marginHorizontal: 5,
+    borderWidth: 1,
+    borderColor: '#2dc653',
   },
   paymentButtonSelected: {
-    backgroundColor: '#6200ee',
+    backgroundColor: '#2dc653',
+    borderColor: '#2dc653',
   },
   paymentButtonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 16,
+  },
+  paymentMethodBonus: {
+    color: '#e0e0e0',
+    fontSize: 12,
+    marginTop: 5,
   },
   totalContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginTop: 15,
+    marginBottom: 20,
+    paddingTop: 15,
+    borderTopWidth: 1,
+    borderTopColor: '#284b63',
   },
   totalLabel: {
-    color: '#fff',
+    color: '#e0e0e0',
     fontSize: 18,
     fontWeight: 'bold',
   },
   totalValue: {
-    color: '#fff',
+    color: '#2dc653',
     fontSize: 18,
     fontWeight: 'bold',
   },
   checkoutButton: {
-    backgroundColor: '#6200ee',
+    backgroundColor: '#2dc653',
     padding: 16,
-    borderRadius: 5,
+    borderRadius: 8,
     alignItems: 'center',
   },
   checkoutButtonText: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
+    letterSpacing: 1,
   },
 });
 

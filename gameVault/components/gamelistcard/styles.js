@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-export default StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     backgroundColor: '#284b63',
@@ -75,4 +75,14 @@ export default StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  cartPriceContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  removeButton: {
+    padding: 5,
+  },
 });
+
+export default styles;

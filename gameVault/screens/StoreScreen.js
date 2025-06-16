@@ -1,17 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, StyleSheet, StatusBar, Platform, Text, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { 
+  View, 
+  ScrollView, 
+  StyleSheet, 
+  Text, 
+  TouchableOpacity,
+  ActivityIndicator,
+  NetInfo
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NavBar from '../components/navbar';
 import Carousel from '../components/StoreScreen/carouselbanner';
 import SectionContainer from '../components/StoreScreen/sectioncontainer';
 import GameCarousel from '../components/StoreScreen/gamecarousel';
 import GameListCard from '../components/gamelistcard';
+import FloatingAccountButton from '../components/floatingaccountbutton';
 
-const StoreScreen = () => {
-  const navigation = useNavigation();
+const StoreScreen = ({ navigation }) => {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isConnected, setIsConnected] = useState(true);
 
   const sections = {
     newReleases: {
@@ -41,8 +49,7 @@ const StoreScreen = () => {
     { section: 'sega', source: require('../assets/Banner4.png') }
   ];
 
-
-  const trendIds = [251833, 31551, 305152, 325594, 284716, 132181]; 
+  const trendIds = [251833, 31551, 305152, 325594, 284716, 132181];
 
   useEffect(() => {
     const fetchGames = async () => {
@@ -73,9 +80,8 @@ const StoreScreen = () => {
     fetchGames();
   }, []);
 
-
   const navigateToSection = (section) => {
-    navigation.navigate('SectionScreen', { 
+    navigation.navigate('Section', { 
       title: section.title,
       color: section.color,
       image: section.image,
@@ -91,6 +97,19 @@ const StoreScreen = () => {
     }
   };
 
+  const handleRetry = () => {
+    setLoading(true);
+    setGames([]);
+    NetInfo.fetch().then(state => {
+      setIsConnected(state.isConnected);
+      if (state.isConnected) {
+        const fetchGames = async () => {
+        };
+        fetchGames();
+      }
+    });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <NavBar />
@@ -99,9 +118,9 @@ const StoreScreen = () => {
         contentContainerStyle={styles.scrollContent}
       >
         <Carousel
-         artworks={bannerGames} 
-         onItemPress={handleBannerPress}
-         />
+          artworks={bannerGames} 
+          onItemPress={handleBannerPress}
+        />
 
         <SectionContainer 
           title={sections.newReleases.title} 
@@ -119,14 +138,27 @@ const StoreScreen = () => {
 
         <Text style={styles.sectionTitle}>Recomendados</Text>
 
-        {loading ? (
-          <Text style={styles.loadingText}>Carregando...</Text>
+        {!isConnected ? (
+          <View style={styles.connectionContainer}>
+            <Text style={styles.errorText}>Sem conexão com a internet</Text>
+            <TouchableOpacity 
+              style={styles.retryButton}
+              onPress={handleRetry}
+            >
+              <Text style={styles.retryText}>Tentar novamente</Text>
+            </TouchableOpacity>
+          </View>
+        ) : loading ? (
+          <ActivityIndicator size="large" color="#2dc653" style={styles.loading} />
+        ) : games.length === 0 ? (
+          <Text style={styles.errorText}>Nenhum jogo encontrado</Text>
         ) : (
           games.map(game => (
             <GameListCard key={game.id} game={game} />
           ))
         )}
       </ScrollView>
+      <FloatingAccountButton />
     </SafeAreaView>
   );
 };
@@ -140,7 +172,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: Platform.OS === 'android' ? 20 : 16,
+    paddingBottom: 80,
   },
   sectionTitle: {
     color: '#e0e0e0',
@@ -148,13 +180,30 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 24,
     marginBottom: 16,
+    paddingHorizontal: 16,
   },
-  loadingText: {
+  loading: {
+    marginVertical: 40,
+  },
+  errorText: {
     color: '#e0e0e0',
     textAlign: 'center',
     marginVertical: 20,
   },
+  connectionContainer: {
+    alignItems: 'center',
+    padding: 20,
+  },
+  retryButton: {
+    backgroundColor: '#2dc653',
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  retryText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
 });
-
 
 export default StoreScreen;

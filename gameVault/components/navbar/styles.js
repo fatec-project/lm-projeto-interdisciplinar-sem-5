@@ -6,6 +6,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 15,
+    paddingBottom: 15,
     backgroundColor: '#051923',
     borderBottomWidth: 1,
     borderBottomColor: '#284b63',
@@ -18,16 +19,22 @@ const styles = StyleSheet.create({
   leftContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 12,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  logoButton: {
+    padding: 2.5,
+  },
+  logoImage: {
+    width: 32,
+    height: 32,
+  },
+  userGreeting: {
+    fontSize: 18,
     color: '#e0e0e0',
   },
   userName: {
-    fontSize: 16,
-    color: '#e0e0e0',
+    fontWeight: 'bold',
+    color: '#e0e0e0', 
   },
   iconsContainer: {
     flexDirection: 'row',
@@ -44,7 +51,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: -6,
     top: -6,
-    backgroundColor: '#6200ee',
+    backgroundColor: '#ff6b6b', // Vermelho claro
     borderRadius: 10,
     width: 20,
     height: 20,

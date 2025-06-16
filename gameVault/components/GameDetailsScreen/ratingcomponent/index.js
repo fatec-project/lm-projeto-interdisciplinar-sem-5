@@ -86,7 +86,6 @@ const RatingComponent = ({ gameId, canRate }) => {
     }
   };
 
-  // 🔥 Função para determinar o texto da avaliação com base em likesPercentage
   const getRatingText = () => {
     if (totalRatings === 0) return 'Nenhuma avaliação ainda';
     if (likesPercentage >= 80) return 'Muito bom';
@@ -96,7 +95,6 @@ const RatingComponent = ({ gameId, canRate }) => {
     return 'Muito ruim';
   };
 
-  // 🔥 Função para determinar o ícone com base em likesPercentage
   const getIcon = () => {
     if (totalRatings === 0) return 'help-circle';
     if (likesPercentage >= 60) return 'thumbs-up';
@@ -104,7 +102,6 @@ const RatingComponent = ({ gameId, canRate }) => {
     else return 'thumbs-down'
   };
 
-  // 🔥 Função para determinar a cor do ícone com base em likesPercentage
   const getIconColor = () => {
     if (totalRatings === 0) return '#e0e0e0';
     if (likesPercentage >= 60) return '#2dc653';
@@ -139,6 +136,10 @@ const RatingComponent = ({ gameId, canRate }) => {
             {
               width: `${likesPercentage}%`,
               backgroundColor: '#2dc653',
+              borderTopLeftRadius: 5,
+              borderBottomLeftRadius: 5,
+              borderTopRightRadius: likesPercentage === 100 ? 5 : 0,
+              borderBottomRightRadius: likesPercentage === 100 ? 5 : 0,
             },
           ]}
         />
@@ -148,47 +149,75 @@ const RatingComponent = ({ gameId, canRate }) => {
             {
               width: `${dislikesPercentage}%`,
               backgroundColor: '#ff5a5f',
+              borderTopRightRadius: 5,
+              borderBottomRightRadius: 5,
+              borderTopLeftRadius: dislikesPercentage === 100 ? 5 : 0,
+              borderBottomLeftRadius: dislikesPercentage === 100 ? 5 : 0,
             },
           ]}
         />
       </View>
 
-      {/* Legenda */}
-      <View style={styles.legendContainer}>
-        <Text style={{ color: '#2dc653' }}>👍 {likes}</Text>
-        <Text style={{ color: '#ff5a5f' }}>👎 {dislikes}</Text>
+      {/* Contadores */}
+      <View style={styles.countersContainer}>
+        <View style={styles.counterItem}>
+          <Text style={styles.counterLabel}>👍 Gostaram</Text>
+          <Text style={[styles.counterValue, { color: '#2dc653' }]}>{likes}</Text>
+        </View>
+        <View style={styles.counterItem}>
+          <Text style={styles.counterLabel}>👎 Não gostaram</Text>
+          <Text style={[styles.counterValue, { color: '#ff5a5f' }]}>{dislikes}</Text>
+        </View>
       </View>
 
       {/* Botões */}
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity
-          style={[
-            styles.rateButton,
-            styles.likeButton,
-            userRating === true && styles.activeButton,
-            (!canRate || loading) && { opacity: 0.5 }
-          ]}
-          onPress={() => handleRate(true)}
-          disabled={loading || !canRate}
-        >
-          <Ionicons name="thumbs-up" size={20} color="#fff" />
-          <Text style={styles.buttonText}>Gostei</Text>
-        </TouchableOpacity>
+      {canRate && (
+        <View style={styles.buttonsContainer}>
+          <TouchableOpacity
+            style={[
+              styles.rateButton,
+              userRating === true ? styles.likeButtonActive : styles.likeButton,
+              loading && { opacity: 0.5 }
+            ]}
+            onPress={() => handleRate(true)}
+            disabled={loading}
+          >
+            <Ionicons 
+              name="thumbs-up" 
+              size={20} 
+              color={userRating === true ? '#fff' : '#2dc653'} 
+            />
+            <Text style={[
+              styles.buttonText,
+              { color: userRating === true ? '#fff' : '#2dc653' }
+            ]}>
+              Gostei
+            </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[
-            styles.rateButton,
-            styles.dislikeButton,
-            userRating === false && styles.activeButton,
-            (!canRate || loading) && { opacity: 0.5 }
-          ]}
-          onPress={() => handleRate(false)}
-          disabled={loading || !canRate}
-        >
-          <Ionicons name="thumbs-down" size={20} color="#fff" />
-          <Text style={styles.buttonText}>Não Gostei</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            style={[
+              styles.rateButton,
+              userRating === false ? styles.dislikeButtonActive : styles.dislikeButton,
+              loading && { opacity: 0.5 }
+            ]}
+            onPress={() => handleRate(false)}
+            disabled={loading}
+          >
+            <Ionicons 
+              name="thumbs-down" 
+              size={20} 
+              color={userRating === false ? '#fff' : '#ff5a5f'} 
+            />
+            <Text style={[
+              styles.buttonText,
+              { color: userRating === false ? '#fff' : '#ff5a5f' }
+            ]}>
+              Não Gostei
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };
