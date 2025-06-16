@@ -3,12 +3,10 @@ import BibliotecaController from './controller/BibliotecaController.js';
 import CarrinhoController from './controller/CarrinhoController.js';
 import UsuarioController from './controller/UsuarioController.js';
 
-// Instâncias dos controllers
 const usuarioController = new UsuarioController();
 const avaliacaoController = new AvaliacaoController();
 const bibliotecaController = new BibliotecaController();
 const carrinhoController = new CarrinhoController();
-const listaDesejosController = new ListaDesejosController();
 
 const GameVaultAPI = {
   avaliacoes: {
