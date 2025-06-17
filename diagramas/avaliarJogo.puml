@@ -1,0 +1,20 @@
+@startuml avaliarJogo
+title Diagrama de Atividades - Avaliar Jogo
+
+start
+
+:Logar na conta;
+:Validar login;
+:Acessar jogo na Biblioteca/Loja;
+:Verificar posse do jogo;
+
+if (Jogo possuído?) then (Sim)
+  :Selecionar avaliação (Gostou / Não Gostou / Remover);
+  :Registrar avaliação;
+  :Atualizar contagem;
+else (Não)
+  :Bloquear avaliação;
+endif
+
+stop
+@enduml

@@ -1,0 +1,101 @@
+@startuml classes
+title Diagrama de Classes - GameVault
+
+package Model {
+  class Avaliacao {
+    +jogoId: number
+    +usuarioId: number
+    +gostou: boolean
+    +dataAvaliacao: Date
+    +isValid(): boolean
+    +toString(): string
+  }
+
+  class Biblioteca {
+    +usuarioId: number
+    +jogoId: number
+    +dataAdicao: Date
+    +isValid(): boolean
+    +toJSON(): object
+  }
+
+  class Carrinho {
+    +usuarioId: number
+    +jogoId: number
+    +dataAdicao: Date
+    +isValid(): boolean
+    +toString(): string
+  }
+
+  class Usuario {
+    +id: number
+    +nome: string
+    +email: string
+    +senha: string
+    +isValid(): boolean
+    +toSafeObject(): object
+    +atualizar(dados): void
+  }
+}
+
+package Controller {
+  class AvaliacaoController {
+    +avaliar(jogoId, usuarioId, gostou): boolean
+    +remover(usuarioId, jogoId): boolean
+    +getAvaliacoesByJogo(jogoId): Avaliacao[]
+  }
+
+  class BibliotecaController {
+    +adicionar(usuarioId, jogoId): boolean
+    +remover(usuarioId, jogoId): boolean
+    +listar(usuarioId): Biblioteca[]
+  }
+
+  class CarrinhoController {
+    +adicionar(usuarioId, jogoId): boolean
+    +remover(usuarioId, jogoId): boolean
+    +limpar(usuarioId): boolean
+    +listar(usuarioId): Carrinho[]
+  }
+
+  class UsuarioController {
+    +criar(usuario): Usuario
+    +login(email, senha): Usuario
+    +atualizar(id, dados): boolean
+  }
+}
+
+package View {
+  class GameDetailsScreen {
+    +render(): void
+    +handleAddToCart(): void
+    +handleRating(): void
+  }
+
+  class CartScreen {
+    +render(): void
+    +handleCheckout(): void
+  }
+
+  class AuthScreen {
+    +render(): void
+  }
+
+  class AccountScreen {
+    +render(): void
+  }
+}
+
+AvaliacaoController --> Avaliacao : manipula
+BibliotecaController --> Biblioteca : manipula
+CarrinhoController --> Carrinho : manipula
+UsuarioController --> Usuario : manipula
+
+GameDetailsScreen --> CarrinhoController : usa
+GameDetailsScreen --> BibliotecaController : usa
+GameDetailsScreen --> AvaliacaoController : usa
+CartScreen --> CarrinhoController : usa
+CartScreen --> BibliotecaController : usa
+AuthScreen --> UsuarioController : usa
+AccountScreen --> UsuarioController : usa
+@enduml
