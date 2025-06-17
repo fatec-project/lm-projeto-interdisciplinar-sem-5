@@ -13,7 +13,9 @@ export const RootStackNavigator = () => {
   const { user } = useUser();
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={{ 
+      headerShown: false,
+      animation: 'fade' }}>
       {user ? (
         <>
           <Stack.Screen name="StoreMain" component={StoreScreen} />
