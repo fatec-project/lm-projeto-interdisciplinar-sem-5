@@ -1,5 +1,5 @@
 import React from 'react';
-import { StatusBar, View } from 'react-native';
+import { StatusBar, View, Default } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer, DefaultTheme  } from '@react-navigation/native';
 import { UserProvider } from './context/UserContext';

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, Dimensions, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Dimensions, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import styles from './styles';
 
@@ -11,62 +11,34 @@ const GameCarousel = ({ gameIds = [] }) => {
   const navigation = useNavigation();
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchGames = async () => {
-      if (!gameIds || gameIds.length === 0) {
-        setLoading(false);
-        return;
-      }
-
       try {
-        setLoading(true);
-        setError(null);
-        
+        const BACKEND_URL = "https://test-five-beta-98.vercel.app/game/";
         const promises = gameIds.map(id => 
-          fetch(`https://test-five-beta-98.vercel.app/game/${id}`)
-            .then(response => {
-              if (!response.ok) {
-                throw new Error(`Erro ao carregar jogo ID ${id}`);
-              }
-              return response.json();
-            })
+          fetch(`${BACKEND_URL}${id}`).then(res => res.json())
         );
-        
         const results = await Promise.all(promises);
         setGames(results.filter(game => game && game.cover));
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching games:', error);
-        setError('Erro ao carregar jogos');
-      } finally {
         setLoading(false);
       }
     };
 
-    fetchGames();
+    if (gameIds.length > 0) {
+      fetchGames();
+    }
   }, [gameIds]);
 
-  if (loading) {
+  if (loading || games.length === 0) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="small" color="#2dc653" />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text style={styles.loadingText}>{error}</Text>
-      </View>
-    );
-  }
-
-  if (!loading && games.length === 0) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text style={styles.loadingText}>Nenhum jogo encontrado</Text>
+        <Text style={styles.loadingText}>
+          {loading ? 'Carregando jogos...' : 'Nenhum jogo encontrado'}
+        </Text>
       </View>
     );
   }
@@ -88,7 +60,7 @@ const GameCarousel = ({ gameIds = [] }) => {
           >
             <View style={styles.card}>
               <Image
-                source={{ uri: item.cover?.url ? `https:${item.cover.url.replace('t_thumb', 't_cover_big')}` : null }}
+                source={{ uri: `https:${item.cover.url.replace('t_thumb', 't_cover_big')}` }}
                 style={styles.cardImage}
                 resizeMode="cover"
               />
