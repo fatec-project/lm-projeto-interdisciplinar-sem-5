@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "game-vault",
-    "slug": "snack-db57a44b-3394-487f-8c44-9f36b6de1740",
+    "slug": "game-vault",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -24,6 +24,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e8c8bd90-8935-4fab-b465-1a76eea90c06"
+      }
+    },
+    "owner": "marcelotypea"
   }
 }
