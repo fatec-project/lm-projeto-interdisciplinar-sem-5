@@ -60,7 +60,6 @@ const SectionScreen = ({ navigation, route }) => {
       />
       
       <SafeAreaView style={styles.safeArea}>
-        {/* Botão de voltar - movido para dentro do header */}
         <View style={styles.header}>
           <TouchableOpacity 
             style={styles.backButton}

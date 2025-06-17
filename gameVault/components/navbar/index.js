@@ -50,7 +50,7 @@ const NavBar = () => {
   return (
     <>
       {Platform.OS === 'android' && <StatusBar backgroundColor="#051923" barStyle="light-content" />}
-      <View style={[styles.navBar, { paddingTop }]}>
+      <View style={[styles.navBar]}>
         <View style={styles.leftContainer}>
           <TouchableOpacity 
             style={styles.logoButton}
