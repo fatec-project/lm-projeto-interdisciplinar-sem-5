@@ -28,7 +28,7 @@ const CartScreen = () => {
       if (!user) return;
 
       try {
-        const BACKEND_URL = "https://igdb-test-production.up.railway.app/game/";
+        const BACKEND_URL = "https://test-five-beta-98.vercel.app/game/";
         const carrinho = await GameVaultAPI.carrinho.listar(user.id);
 
         if (!carrinho.length) {

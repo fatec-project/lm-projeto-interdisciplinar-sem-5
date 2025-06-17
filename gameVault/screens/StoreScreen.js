@@ -54,7 +54,7 @@ const StoreScreen = ({ navigation }) => {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const BACKEND_URL = "https://igdb-test-production.up.railway.app/game/";
+        const BACKEND_URL = "https://test-five-beta-98.vercel.app/game/";
         const promises = trendIds.map(id =>
           fetch(`${BACKEND_URL}${id}`).then(res => res.json())
         );

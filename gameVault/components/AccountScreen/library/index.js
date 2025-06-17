@@ -26,7 +26,7 @@ const LibraryComponent = () => {
     try {
       setLoading(true);
       const biblioteca = await GameVaultAPI.biblioteca.listar(user.id);
-      const BACKEND_URL = "https://igdb-test-production.up.railway.app/game/";
+      const BACKEND_URL = "https://test-five-beta-98.vercel.app/game/";
 
       if (!biblioteca.length) {
         setGames([]);

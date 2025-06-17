@@ -38,7 +38,7 @@ const GameDetailsScreen = ({ route }) => {
     const fetchGameDetails = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`https://igdb-test-production.up.railway.app/game/${game.id}`);
+        const response = await fetch(`https://test-five-beta-98.vercel.app/game/${game.id}`);
         const data = await response.json();
 
         setGameDetails(data);
