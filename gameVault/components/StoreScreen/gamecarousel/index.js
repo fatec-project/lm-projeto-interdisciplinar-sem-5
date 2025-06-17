@@ -19,7 +19,7 @@ const GameCarousel = ({ gameIds = [] }) => {
         const promises = gameIds.map(id => 
           fetch(`${BACKEND_URL}${id}`).then(res => res.json())
         );
-        const results = await Promise.allSettled(promises);
+        const results = await Promise.all(promises);
         setGames(results.filter(game => game && game.cover));
         setLoading(false);
       } catch (error) {
