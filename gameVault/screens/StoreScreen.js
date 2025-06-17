@@ -24,20 +24,20 @@ const StoreScreen = ({ navigation }) => {
   const sections = {
     newReleases: {
       title: "Novos Lançamentos",
-      color: "#2dc653",
-      image: require('../assets/new-releases-bg.png'),
+      color: "#137f41",
+      image: require('../assets/new-releases-bg2.png'),
       ids: [338067, 331204, 325591, 337024]
     },
     rpgs: {
       title: "Jogos de RPG",
-      color: "#faa307",
+      color: "#a82b1e",
       image: require('../assets/rpg-bg.png'),
       ids: [171233, 1877, 267306, 2155]
     },
     sega: {
       title: "Promoção SEGA!",
       color: "#023e8a",
-      image: require('../assets/Banner4.png'),
+      image: require('../assets/sega-bg.png'),
       ids: [150010, 217623, 114283, 120278]
     },
   };

@@ -16,20 +16,21 @@ const styles = StyleSheet.create({
     maxWidth: '48%',
     backgroundColor: '#0a2d42',
     borderRadius: 10,
-    padding: 10,
+    overflow: 'hidden', // Para garantir que a imagem respeite o borderRadius
     borderWidth: 1,
     borderColor: '#284b63',
   },
   gameImage: {
     width: '100%',
-    height: 150,
+    aspectRatio: 3/4, // Proporção comum para capas de jogos
     borderRadius: 8,
   },
   gameTitle: {
     color: '#e0e0e0',
-    marginTop: 8,
+    padding: 8, // Adicionado padding apenas ao texto
     textAlign: 'center',
     fontSize: 14,
+    backgroundColor: '#0a2d42', // Fundo para o texto
   },
   listContent: {
     paddingHorizontal: 8,

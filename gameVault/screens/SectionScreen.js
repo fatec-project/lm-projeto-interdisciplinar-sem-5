@@ -5,7 +5,6 @@ import {
   StyleSheet, 
   ScrollView, 
   ImageBackground, 
-  Dimensions,
   ActivityIndicator,
   TouchableOpacity
 } from 'react-native';
@@ -50,108 +49,130 @@ const SectionScreen = ({ navigation, route }) => {
   }, [gameIds]);
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container}>
-        <ImageBackground
-          source={image}
-          style={styles.headerImage}
-          blurRadius={2}
-        >
-          <LinearGradient
-            colors={['rgba(0,0,0,0.7)', 'rgba(0,0,0,0.5)', 'transparent']}
-            style={styles.gradient}
-          />
-          <Text style={styles.title}>{title}</Text>
-        </ImageBackground>
-
-        <View style={styles.content}>
-          {loading ? (
-            <View style={styles.centerContainer}>
-              <ActivityIndicator size="large" color={color} />
-              <Text style={[styles.loadingText, { color }]}>Carregando jogos...</Text>
-            </View>
-          ) : error ? (
-            <View style={styles.centerContainer}>
-              <Text style={styles.errorText}>{error}</Text>
-            </View>
-          ) : (
-            games.map(game => (
-              <GameListCard key={game.id} game={game} />
-            ))
-          )}
-        </View>
-      </ScrollView>
+    <ImageBackground
+      source={image}
+      style={styles.backgroundImage}
+      blurRadius={4}
+    >
+      <LinearGradient
+        colors={['rgba(0,0,0,0.8)', 'rgba(0,0,0,0.5)', 'rgba(0,0,0,0.3)']}
+        style={styles.gradientOverlay}
+      />
       
-      {/* Botão de voltar */}
-      <TouchableOpacity 
-        style={styles.backButton}
-        onPress={() => navigation.goBack()}
-      >
-        <Ionicons name="arrow-back" size={24} color="#fff" />
-      </TouchableOpacity>
-    </SafeAreaView>
+      <SafeAreaView style={styles.safeArea}>
+        {/* Botão de voltar - movido para dentro do header */}
+        <View style={styles.header}>
+          <TouchableOpacity 
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Ionicons name="arrow-back" size={24} color="#fff" />
+          </TouchableOpacity>
+          <Text style={styles.title} numberOfLines={2}>{title}</Text>
+        </View>
+
+        <ScrollView style={styles.container}>
+          <View style={styles.content}>
+            {loading ? (
+              <View style={styles.centerContainer}>
+                <ActivityIndicator size="large" color={color} />
+                <Text style={[styles.loadingText, { color }]}>Carregando jogos...</Text>
+              </View>
+            ) : error ? (
+              <View style={styles.centerContainer}>
+                <Text style={styles.errorText}>{error}</Text>
+              </View>
+            ) : (
+              games.map(game => (
+                <GameListCard key={game.id} game={game} backgroundColor="rgba(10, 45, 66, 0.7)" />
+              ))
+            )}
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
+  backgroundImage: {
     flex: 1,
-    backgroundColor: '#051923',
-  },
-  container: {
-    flex: 1,
-  },
-  headerImage: {
     width: '100%',
-    height: 200,
-    justifyContent: 'flex-end',
+    height: '100%',
+    resizeMode: 'cover',
   },
-  gradient: {
+  gradientOverlay: {
     position: 'absolute',
     left: 0,
     right: 0,
     top: 0,
     bottom: 0,
   },
+  safeArea: {
+    flex: 1,
+  },
+  container: {
+    flex: 1,
+    marginTop: 60, // Espaço para o header
+  },
+  header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    zIndex: 10,
+  },
   title: {
-    fontSize: 32,
+    flex: 1,
+    fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
-    padding: 20,
-    textShadowColor: 'rgba(0,0,0,0.5)',
+    textShadowColor: 'rgba(0,0,0,0.8)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 5,
-  },
-  content: {
-    padding: 16,
-    minHeight: 200, // Garante espaço para o loading/error
-  },
-  centerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 40,
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 16,
-  },
-  errorText: {
-    color: 'white',
-    fontSize: 16,
-    textAlign: 'center',
+    marginLeft: 10,
+    marginRight: 50, // Espaço para evitar que o texto vá até a borda
   },
   backButton: {
-    position: 'absolute',
-    top: 40,
-    left: 20,
-    zIndex: 10,
     backgroundColor: 'rgba(0,0,0,0.5)',
     borderRadius: 20,
     width: 40,
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  content: {
+    padding: 16,
+    minHeight: 200,
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 40,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    borderRadius: 10,
+    margin: 16,
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: 'white',
+    textShadowColor: 'rgba(0,0,0,0.5)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+  errorText: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0,0,0,0.5)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
 });
 
