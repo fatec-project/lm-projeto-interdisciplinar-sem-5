@@ -111,7 +111,7 @@ const CartScreen = () => {
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       {cartItems.length === 0 ? (
-        <View style={styles.emptyContainer}>
+        <View style={[styles.emptyContainer, { paddingTop: 40 }]}>
           <TouchableOpacity 
             style={styles.backButton}
             onPress={() => navigation.goBack()}
@@ -129,9 +129,9 @@ const CartScreen = () => {
         </View>
       ) : (
         <ScrollView style={styles.scrollContainer}>
-          <View style={styles.header}>
+          <View style={[styles.header, { paddingTop: 40 }]}>
             <TouchableOpacity 
-              style={styles.backButton}
+              style={[styles.backButton, { paddingTop: 30 }]}
               onPress={() => navigation.goBack()}
             >
               <Ionicons name="arrow-back" size={24} color="#e0e0e0" />

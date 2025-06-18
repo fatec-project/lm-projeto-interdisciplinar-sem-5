@@ -60,7 +60,7 @@ const SectionScreen = ({ navigation, route }) => {
       />
       
       <SafeAreaView style={styles.safeArea}>
-        <View style={styles.header}>
+        <View style={[styles.header, { paddingTop: 40 }]}>
           <TouchableOpacity 
             style={styles.backButton}
             onPress={() => navigation.goBack()}
