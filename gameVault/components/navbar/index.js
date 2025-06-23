@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View,
   Text,
@@ -15,13 +15,30 @@ import { useUser } from '../../context/UserContext';
 import GameVaultAPI from '../../backend/index.js';
 import styles from './styles';
 
-const NavBar = ({ showSearchBar = false }) => {
+const NavBar = ({ showSearchBar = false, onSearchChange }) => {
   const navigation = useNavigation();
   const { user } = useUser();
   const [cartCount, setCartCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const searchAnim = useRef(new Animated.Value(0)).current;
   const searchInputRef = useRef(null);
+  const searchTimeout = useRef(null);
+
+  // Função para lidar com mudanças no texto de pesquisa
+  const handleSearchChange = useCallback((text) => {
+    setSearchQuery(text);
+    
+    // Debounce para evitar muitas requisições
+    if (searchTimeout.current) {
+      clearTimeout(searchTimeout.current);
+    }
+    
+    searchTimeout.current = setTimeout(() => {
+      if (onSearchChange) {
+        onSearchChange(text);
+      }
+    }, 500); // 500ms de delay após a digitação
+  }, [onSearchChange]);
 
   useEffect(() => {
     const fetchCartCount = async () => {
@@ -40,7 +57,6 @@ const NavBar = ({ showSearchBar = false }) => {
 
   useEffect(() => {
     if (showSearchBar) {
-      // Animação para mostrar a barra de pesquisa
       Animated.timing(searchAnim, {
         toValue: 1,
         duration: 300,
@@ -49,13 +65,19 @@ const NavBar = ({ showSearchBar = false }) => {
         searchInputRef.current?.focus();
       });
     } else {
-      // Animação para esconder a barra de pesquisa
       Animated.timing(searchAnim, {
         toValue: 0,
         duration: 200,
         useNativeDriver: false
       }).start();
     }
+
+    // Limpa o timeout quando o componente desmonta
+    return () => {
+      if (searchTimeout.current) {
+        clearTimeout(searchTimeout.current);
+      }
+    };
   }, [showSearchBar]);
 
   const handleCartPress = () => {
@@ -65,15 +87,12 @@ const NavBar = ({ showSearchBar = false }) => {
   const toggleSearch = () => {
     if (showSearchBar) {
       setSearchQuery('');
+      if (onSearchChange) {
+        onSearchChange('');
+      }
       navigation.goBack();
     } else {
       navigation.navigate('SearchScreen');
-    }
-  };
-
-  const handleSearchSubmit = () => {
-    if (searchQuery.length > 2) {
-      navigation.navigate('SearchScreen', { query: searchQuery });
     }
   };
 
@@ -96,7 +115,6 @@ const NavBar = ({ showSearchBar = false }) => {
       {Platform.OS === 'android' && <StatusBar backgroundColor="#051923" barStyle="light-content" />}
       <View style={[styles.navBar, { paddingTop }]}>
         <View style={[styles.leftContainer, { position: 'relative' }]}>
-          {/* Logo com animação de fade out */}
           <Animated.View style={{ opacity: logoOpacity }}>
             <TouchableOpacity 
               style={styles.logoButton}
@@ -110,14 +128,12 @@ const NavBar = ({ showSearchBar = false }) => {
             </TouchableOpacity>
           </Animated.View>
 
-          {/* Saudação do usuário (somente quando não está pesquisando) */}
           {!showSearchBar && user && (
             <Text style={styles.userGreeting}>
               Olá, <Text style={styles.userName}>{user.nome.split(' ')[0]}!</Text>
             </Text>
           )}
 
-          {/* Barra de pesquisa animada */}
           <Animated.View style={[styles.searchContainer, { width: searchWidth }]}>
             <TextInput
               ref={searchInputRef}
@@ -125,8 +141,7 @@ const NavBar = ({ showSearchBar = false }) => {
               placeholder="Buscar jogos..."
               placeholderTextColor="#aaa"
               value={searchQuery}
-              onChangeText={setSearchQuery}
-              onSubmitEditing={handleSearchSubmit}
+              onChangeText={handleSearchChange}
               returnKeyType="search"
             />
           </Animated.View>

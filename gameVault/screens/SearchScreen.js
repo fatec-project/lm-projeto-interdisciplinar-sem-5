@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   View, 
   StyleSheet, 
@@ -14,10 +14,12 @@ const SearchScreen = () => {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const route = useRoute();
-  const initialQuery = route.params?.query || '';
+  const navigation = useNavigation();
 
-  const handleSearch = async (query) => {
+  // Função de pesquisa com debounce
+  const handleSearch = useCallback(async (query) => {
     if (query.length < 3) {
       setGames([]);
       return;
@@ -43,17 +45,29 @@ const SearchScreen = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
+  // Atualiza a pesquisa quando o texto muda
+  const handleSearchChange = useCallback((query) => {
+    setSearchQuery(query);
+    handleSearch(query);
+  }, [handleSearch]);
+
+  // Pesquisa inicial ao abrir a tela
   useEffect(() => {
+    const initialQuery = route.params?.query || '';
     if (initialQuery) {
+      setSearchQuery(initialQuery);
       handleSearch(initialQuery);
     }
-  }, [initialQuery]);
+  }, [route.params?.query]);
 
   return (
     <View style={styles.container}>
-      <NavBar showSearchBar={true} />
+      <NavBar 
+        showSearchBar={true} 
+        onSearchChange={handleSearchChange}
+      />
       
       {loading ? (
         <ActivityIndicator size="large" color="#e63946" style={{ marginTop: 30 }} />
@@ -61,7 +75,7 @@ const SearchScreen = () => {
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>{error}</Text>
         </View>
-      ) : games.length === 0 && initialQuery.length >= 3 ? (
+      ) : games.length === 0 && searchQuery.length >= 3 ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>Nenhum jogo encontrado</Text>
         </View>
