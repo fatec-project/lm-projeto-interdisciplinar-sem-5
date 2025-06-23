@@ -15,9 +15,9 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    paddingTop: 10,
   },
   leftContainer: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: -6,
     top: -6,
-    backgroundColor: '#ff6b6b', // Vermelho claro
+    backgroundColor: '#ff6b6b',
     borderRadius: 10,
     width: 20,
     height: 20,
@@ -63,6 +63,21 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 12,
     fontWeight: 'bold',
+  },
+  searchContainer: {
+  position: 'absolute',
+  right: 0,
+  height: 40,
+  overflow: 'hidden',
+  },
+  searchInput: {
+    flex: 1,
+    backgroundColor: '#0a2a42',
+    color: '#fff',
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    fontSize: 16,
   },
 });
 

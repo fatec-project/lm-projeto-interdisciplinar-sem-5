@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   View, 
-  TextInput,
   StyleSheet, 
   FlatList, 
   ActivityIndicator,
   Text
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import GameListCard from '../components/gamelistcard';
+import NavBar from '../components/navbar';
 
 const SearchScreen = () => {
-  const [query, setQuery] = useState('');
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const navigation = useNavigation();
+  const route = useRoute();
+  const initialQuery = route.params?.query || '';
 
-  const handleSearch = async () => {
+  const handleSearch = async (query) => {
     if (query.length < 3) {
       setGames([]);
       return;
@@ -45,25 +45,23 @@ const SearchScreen = () => {
     }
   };
 
+  useEffect(() => {
+    if (initialQuery) {
+      handleSearch(initialQuery);
+    }
+  }, [initialQuery]);
+
   return (
     <View style={styles.container}>
-      <TextInput
-        placeholder="Buscar jogo..."
-        placeholderTextColor="#aaa"
-        style={styles.searchInput}
-        value={query}
-        onChangeText={setQuery}
-        onSubmitEditing={handleSearch}
-        returnKeyType="search"
-      />
-
+      <NavBar showSearchBar={true} />
+      
       {loading ? (
         <ActivityIndicator size="large" color="#e63946" style={{ marginTop: 30 }} />
       ) : error ? (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>{error}</Text>
         </View>
-      ) : games.length === 0 && query.length >= 3 ? (
+      ) : games.length === 0 && initialQuery.length >= 3 ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>Nenhum jogo encontrado</Text>
         </View>
@@ -88,17 +86,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#051923',
-    padding: 16,
-  },
-  searchInput: {
-    backgroundColor: '#0a2a42',
-    color: '#fff',
-    borderRadius: 10,
-    padding: 12,
-    fontSize: 16,
-    marginBottom: 12,
   },
   listContainer: {
+    padding: 16,
     paddingBottom: 20,
   },
   errorContainer: {
