@@ -5,6 +5,7 @@ import AuthScreen from '../screens/AuthScreen';
 import AccountScreen from '../screens/AccountScreen';
 import SectionScreen from '../screens/SectionScreen';
 import CartScreen from '../screens/CartScreen';
+import SearchScreen from '../screens/SearchScreen';
 import { useUser } from '../context/UserContext';
 
 const Stack = createNativeStackNavigator();
@@ -23,6 +24,7 @@ export const RootStackNavigator = () => {
           <Stack.Screen name="GameDetails" component={GameDetailsScreen} />
           <Stack.Screen name="Section" component={SectionScreen} />
           <Stack.Screen name="Cart" component={CartScreen} />
+          <Stack.Screen name="SearchScreen" component={SearchScreen} />
         </>
       ) : (
         <Stack.Screen name="Auth" component={AuthScreen} />
