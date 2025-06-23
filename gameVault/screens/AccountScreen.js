@@ -32,7 +32,7 @@ const AccountScreen = () => {
   }, [logout]);
 
   return (
-    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+    <View style={styles.container} edges={['top', 'left', 'right']}>
       <NavBar />
       
       <View style={styles.tabsContainer}>
@@ -76,7 +76,7 @@ const AccountScreen = () => {
           </TouchableOpacity>
         </ScrollView>
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 

@@ -111,7 +111,7 @@ const StoreScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <NavBar />
       <ScrollView 
         style={styles.content}
@@ -159,7 +159,7 @@ const StoreScreen = ({ navigation }) => {
         )}
       </ScrollView>
       <FloatingAccountButton />
-    </SafeAreaView>
+    </View>
   );
 };
 
