@@ -30,8 +30,9 @@ categoria/motivo-existencia
 ## ⚙️ Configuração do Ambiente
 ```
 git clone https://github.com/seu-usuario/lm-projeto-interdisciplinar-sem-5.git
-cd lm-projeto-interdisciplinar-sem-5
+cd lm-projeto-interdisciplinar-sem-5/gameVault
 npm install
+npm start
 ```
 ## 🤝 Como Contribuir
 1. Crie uma branch:
